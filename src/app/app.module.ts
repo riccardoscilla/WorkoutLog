@@ -21,6 +21,7 @@ import { TrainingProgramListComponent } from './pages/training-program-list/trai
 import { TrainingProgramDetailComponent } from './pages/training-program-detail/training-program-detail.component';
 import { TrainingDetailComponent } from './pages/training-detail/training-detail.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],
-  providers: [],
+  providers: [MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

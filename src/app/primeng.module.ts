@@ -17,6 +17,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import { PasswordModule } from 'primeng/password';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 @NgModule({
@@ -37,7 +39,9 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     InputNumberModule,
     InputTextareaModule,
     InputSwitchModule,
-    ToggleButtonModule
+    ToggleButtonModule,
+    PasswordModule,
+    TooltipModule
   ]
 })
 export class PrimeNgModule {}

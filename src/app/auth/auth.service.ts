@@ -3,6 +3,9 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { User } from '@firebase/auth-types';
 import { SignUp } from '../sign-up/model/sign-up';
+import { MessageService } from 'primeng/api';
+import { FirebaseError } from '@angular/fire/app';
+import { capitalizeWords } from '../common/utils';
 
 export interface UserData {
   displayName: string
@@ -20,7 +23,8 @@ export class AuthService {
 
   constructor(
     private auth: AngularFireAuth,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService 
   ) { 
     auth.onAuthStateChanged((user: any)=>{
       if (user){
@@ -46,20 +50,23 @@ export class AuthService {
             this.router.navigate(['/dashboard'])
           })
       })
-      .catch((error) => {
-        alert(error)
+      .catch((error: FirebaseError) => {
+        const message = capitalizeWords(error.code.replaceAll("/", " ").replaceAll("-",  " "))
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: message })
       })
   }
 
   signIn(email: string, password: string) {
-    console.log(email, password)
     this.auth.signInWithEmailAndPassword(email, password)
       .then((response) => {
         this.UserData = response.user
-        this.router.navigate(['/training-programs'])
+        this.router.navigate([''])
       })
-      .catch((error) => {
-        alert(error)
+      .catch((error: FirebaseError) => {
+        const message = capitalizeWords(error.code.replaceAll("/", " ").replaceAll("-",  " "))
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: message })
       })
   }
   

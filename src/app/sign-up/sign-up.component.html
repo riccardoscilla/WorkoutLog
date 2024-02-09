@@ -1,36 +1,31 @@
+<p-toast position="top-center"></p-toast>
 
-<div class="grid">
-    <div class="col-12">
-        <h1>Sign Up</h1>
-    </div>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <span style="font-size: 18px; font-weight: 700;"> Sign Up </span>
+</div>
 
-    <div class="col-12">
-        <span class="p-float-label">
-            <input pInputText [(ngModel)]="signUpData.email" />
-            <label htmlFor="email">Email</label>
-        </span>
-    </div>
 
-    <div class="col-12 mt-3">
-        <span class="p-float-label">
-            <input pInputText [(ngModel)]="signUpData.password" />
-            <label htmlFor="password">Password</label>
-        </span>
-    </div>
+<div class="card">
+    <label>Email</label>
+    <input pInputText [(ngModel)]="signUpData.email"/>
 
-    <div class="col-12 mt-3">
-        <span class="p-float-label">
-            <input pInputText [(ngModel)]="signUpData.displayName" />
-            <label htmlFor="name">Name</label>
-        </span>
-    </div>
+    <label>Password</label>
+    <p-password [(ngModel)]="signUpData.password" [toggleMask]="true" [feedback]="false"></p-password>
+    <small style="font-size: 12px; padding-bottom: 8px;">Minimum 6 characters</small>
 
-    <div class="col-12">
+    <label>Repeat Password</label>
+    <p-password [(ngModel)]="signUpData.repeatedPassword" [toggleMask]="true" [feedback]="false"></p-password>
+
+    <label>Name</label>
+    <input pInputText [(ngModel)]="signUpData.displayName" />
+
+
+    <div style="padding-top: 16px;">
         <p-button label="Register" (click)="signUp()" [disabled]="!signUpData.isValid()"></p-button>
     </div>
 
-    <div class="col">
+    <span>
         Already have and acconut?
         <a routerLink="/sign-in">Sign In</a>
-    </div>
+    </span>
 </div>

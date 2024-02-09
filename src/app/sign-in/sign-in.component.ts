@@ -5,12 +5,18 @@ import { AuthService } from '../auth/auth.service';
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
-  styleUrls: ['./sign-in.component.scss']
+  styleUrls: []
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent {
+  email: string
+  password: string
 
-  constructor(public authService: AuthService) { }
+  constructor(
+    public authService: AuthService
+  ) { }
 
-  ngOnInit(): void {}
+  signIn() {
+    this.authService.signIn(this.email, this.password)
+  }
 
 }

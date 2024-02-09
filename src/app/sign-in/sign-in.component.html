@@ -1,30 +1,23 @@
+<p-toast position="top-center"></p-toast>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <span style="font-size: 18px; font-weight: 700;"> Sign In </span>
+</div>
 
 
-<div class="grid">
-    <div class="col-12">
-        <h1>Sign In</h1>
+<div class="card">
+    <label>Email</label>
+    <input pInputText [(ngModel)]="email"/>
+
+    <label>Password</label>
+    <p-password [(ngModel)]="password" [toggleMask]="true" [feedback]="false"></p-password>
+
+    <div style="padding-top: 16px;">
+        <p-button label="Login" (click)="signIn()"></p-button>
     </div>
 
-    <div class="col-12">
-        <span class="p-float-label">
-            <input pInputText id="username" #username />
-            <label htmlFor="username">Email</label>
-        </span>
-    </div>
-
-    <div class="col-12 mt-3">
-        <span class="p-float-label">
-            <input pInputText id="password" #password />
-            <label htmlFor="password">Password</label>
-        </span>
-    </div>
-
-    <div class="col-12">
-        <p-button label="Login" (click)="authService.signIn(username.value, password.value)"></p-button>
-    </div>
-
-    <div class="col">
+    <span>
         Don't have an account?
         <a routerLink="/sign-up">Sign Up</a>
-    </div>
+    </span>
 </div>

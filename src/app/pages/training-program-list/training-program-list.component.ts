@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { TrainingProgram } from 'src/app/model/training-program/training-program';
-import { AuthService } from 'src/app/auth/auth.service';
 import { TrainingProgramAddDialog } from 'src/app/model/training-program/training-program-add-dialog';
 import { MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,7 +19,6 @@ export class TrainingProgramListComponent implements OnInit {
   trainingProgramAddDialog: TrainingProgramAddDialog = new TrainingProgramAddDialog()
 
   constructor(
-    public authService: AuthService,
     private firestore: Firestore,
     private messageService: MessageService,
     private router: Router,

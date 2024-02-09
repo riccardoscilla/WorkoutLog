@@ -5,7 +5,7 @@ import { SignUp } from './model/sign-up';
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.scss']
+  styleUrls: []
 })
 export class SignUpComponent implements OnInit {
 
