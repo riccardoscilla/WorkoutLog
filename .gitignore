@@ -40,7 +40,7 @@ testem.log
 /.firebase
 /.angular
 
-src/environments
+src/environments/**
 
 # System files
 .DS_Store
