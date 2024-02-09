@@ -12,7 +12,7 @@ import { TrainingProgramDetailComponent } from './pages/training-program-detail/
 import { TrainingDetailComponent } from './pages/training-detail/training-detail.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
+  { path: '', redirectTo: '/training-program', pathMatch: 'full' },
 
   { path: 'sign-in', component: SignInComponent, canActivate: [AuthGuard] },
   { path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard] },

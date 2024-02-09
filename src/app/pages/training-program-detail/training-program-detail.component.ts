@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DocumentData } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/auth/auth.service';
-import { getLastItem, getLastOrder, groupByKey, sortByProperty, swapItems } from 'src/app/common/utils';
+import { getLastItem, getLastOrder, sortByProperty, swapItems } from 'src/app/common/utils';
 import { TrainingProgram } from 'src/app/model/training-program/training-program';
 import { Training } from 'src/app/model/training/training';
 import { TrainingAddDialog } from 'src/app/model/training/training-add-dialog';
@@ -97,7 +97,6 @@ export class TrainingProgramDetailComponent implements OnInit {
   }
 
   deleteTrainingProgram() {
-    this.trainings.forEach(training => this.firestore.deleteTraining(training))
     this.firestore.deleteTrainingProgram(this.trainingProgram)
       .then(() => this.gotoTrainingProgramList())
   }

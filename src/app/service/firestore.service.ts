@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, PERSISTENCE_SETTINGS } from '@angular/fire/compat/firestore';
+import { AngularFirestore, DocumentData, PERSISTENCE_SETTINGS } from '@angular/fire/compat/firestore';
 import { AuthService } from '../auth/auth.service';
 import { Exercise } from '../model/exercise/exercise';
 import { TrainingProgram } from '../model/training-program/training-program';
@@ -52,6 +52,15 @@ export class Firestore {
 
   deleteTrainingProgram(trainingProgram: TrainingProgram) {
     const user = this.authService.userInLocalStorage
+    this.getTrainingsOfTrainingProgram(trainingProgram.id).subscribe({
+      next: (response) => {
+        const trainings = response.map((data: DocumentData) => Training.fromSnapshot(data.payload.doc))
+        trainings.forEach(training => this.deleteTraining(training))
+      },
+      error: (error) => {
+        alert('Error while fetching trainings')
+      }
+    }) 
     return this.firestore.collection('user').doc(user.uid).collection('trainingProgram').doc(trainingProgram.id).delete()
   }
 
@@ -84,6 +93,13 @@ export class Firestore {
 
   deleteTraining(training: Training) {
     const user = this.authService.userInLocalStorage
+    this.getTrainingExercisesOfTraining(training.id).subscribe({
+      next: (response) => {
+        const trainingExercises = response.map((data: DocumentData) => TrainingExercise.fromSnapshot(data.payload.doc))
+        trainingExercises.forEach(trainingExercise => this.deleteTrainingExercise(trainingExercise))
+      }
+    })
+    
     return this.firestore.collection('user').doc(user.uid).collection('training').doc(training.id).delete()
   }
 

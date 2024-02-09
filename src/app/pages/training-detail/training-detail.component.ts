@@ -154,7 +154,6 @@ export class TrainingDetailComponent implements OnInit {
   }
 
   deleteTraining() {
-    this.trainingExercises.forEach(trainingExercise => this.firestore.deleteTrainingExercise(trainingExercise))
     this.firestore.deleteTraining(this.training)
       .then(() => this.gotoTrainingProgramDetail())
   }

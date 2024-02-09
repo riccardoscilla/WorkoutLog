@@ -1,8 +1,9 @@
+<div class="topbar">
+  <app-topbar *ngIf="authService.isLoggedIn"></app-topbar>
+</div>
 
 <div class="main">
-    <!-- <div class="topbar">
-      <app-topbar *ngIf="authService.isLoggedIn"></app-topbar>
-    </div> -->
+
   
     <div class="body">
       <router-outlet></router-outlet>

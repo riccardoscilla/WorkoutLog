@@ -1,19 +1,21 @@
+@import '../../styles/variables.scss';
+
 
 .main {
     width: 100vw;
     height: 100%;
     padding: 8px;
 
-    // background-color: aquamarine;
+    background-color: $bg_color;
 
     display: flex;
-    justify-content: end;
-    // align-items: center;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .user {
-    width: 40px;
-    height: 40px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
 
     // background-color: beige;
@@ -23,6 +25,6 @@
     align-items: center;
 
     i {
-        font-size: 1.5rem;
+        font-size: 2rem;
     }
 }
