@@ -1,0 +1,33 @@
+p-dialog, p-confirmdialog {
+    .p-dialog-header {
+        border-bottom: 0 !important;
+        padding: 16px !important;
+        
+        span {
+            font-size: 18px !important;
+            font-weight: 700 !important;
+        }
+    }
+
+
+    .p-dialog-content {
+        border-top: 0 !important;
+        // padding-bottom: 0 !important;
+        padding: 8px !important;
+
+        // height: 50vh;
+    }
+
+    .p-dialog-footer {
+        border-top: 0 !important;
+        padding: 16px !important;
+
+        display: flex;
+        justify-content: end;
+        gap: 8px;
+
+        button {
+            margin: 0 !important;
+        }
+    }
+}

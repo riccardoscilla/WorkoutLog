@@ -1,0 +1,10 @@
+<h1>User Profile</h1>
+<div *ngIf="authService.UserData as user">
+  <!-- <img src="{{(user.photoURL) ? user.photoURL : '/assets/dummy-user.png'}}" alt="{{user.displayName}}"> -->
+  <h2>Hello: <strong>{{(user.displayName) ? user.displayName : 'User'}}</strong></h2>
+  <p>User ID: <strong>{{user.uid}}</strong></p>
+  <p>Email: <strong>{{user.email}}</strong></p>
+  <p>Email Verified: <strong>{{user.emailVerified}}</strong></p>
+</div>
+
+<button (click)="authService.signOut()" >LogOut</button>

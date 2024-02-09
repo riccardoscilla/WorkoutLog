@@ -1,0 +1,36 @@
+
+<div class="grid">
+    <div class="col-12">
+        <h1>Sign Up</h1>
+    </div>
+
+    <div class="col-12">
+        <span class="p-float-label">
+            <input pInputText [(ngModel)]="signUpData.email" />
+            <label htmlFor="email">Email</label>
+        </span>
+    </div>
+
+    <div class="col-12 mt-3">
+        <span class="p-float-label">
+            <input pInputText [(ngModel)]="signUpData.password" />
+            <label htmlFor="password">Password</label>
+        </span>
+    </div>
+
+    <div class="col-12 mt-3">
+        <span class="p-float-label">
+            <input pInputText [(ngModel)]="signUpData.displayName" />
+            <label htmlFor="name">Name</label>
+        </span>
+    </div>
+
+    <div class="col-12">
+        <p-button label="Register" (click)="signUp()" [disabled]="!signUpData.isValid()"></p-button>
+    </div>
+
+    <div class="col">
+        Already have and acconut?
+        <a routerLink="/sign-in">Sign In</a>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+<p-toast position="top-center"></p-toast>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <span style="font-size: 18px; font-weight: 700;"> Training Programs </span>
+    <button type="button" pButton pRipple icon="pi pi-plus" (click)="openTrainingProgramDialog()"></button>
+</div>
+
+<ng-container *ngIf="trainingProgram.isData">
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div *ngFor="let trainingProgram of trainingPrograms" class="card">
+            <div class="header" (click)="gotoTrainingProgramDetail(trainingProgram)">
+                <div class="title">
+                    {{trainingProgram.name}}
+                </div>
+                <div class="info-right">
+                    {{trainingProgram.date | date:'mediumDate'}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ng-container>
+
+<ng-container *ngIf="trainingProgram.loading">
+    <div class="card">
+        <div class="title">
+            <i class="pi pi-spin pi-spinner"></i>
+            Loading ...
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="trainingProgram.noData">
+    <div class="card">
+        <div class="title">
+            <i class="pi pi-info-circle"></i>
+            No Training Programs
+        </div>
+    </div>
+</ng-container>
+
+<p-dialog [(visible)]="trainingProgramAddDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="header">
+        <span class="text-xl font-bold">{{trainingProgramAddDialog.header}}</span>
+    </ng-template>
+    <ng-template pTemplate="content">
+
+        <div class="card" style="height: 100%;">
+            <label>Name</label>
+            <input pInputText [(ngModel)]="trainingProgramAddDialog.trainingProgram.name"/>
+            
+            <label>Date</label>
+            <p-calendar [(ngModel)]="trainingProgramAddDialog.trainingProgram.date" [touchUI]="true" [readonlyInput]="true" dateFormat="M dd, yy"></p-calendar>
+        </div>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Save" (click)="saveTrainingProgram()" [disabled]="!trainingProgramAddDialog.trainingProgram.isValid()"></p-button>
+    </ng-template>
+</p-dialog>
