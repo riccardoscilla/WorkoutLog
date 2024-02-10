@@ -5,7 +5,7 @@
     <div style="height: 40px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
         <div>
             <i class="pi pi-chevron-left" style="font-size: 16px; margin-right: 8px; padding: 8px" (click)="gotoTrainingProgramList()"></i>
-            <span style="font-size: 18px; font-weight: 700;"> {{header}} </span>
+            <span class="title"> {{header}} </span>
         </div>
     
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -23,18 +23,17 @@
         <p-calendar [(ngModel)]="trainingProgram.date" [touchUI]="true" [readonlyInput]="true" dateFormat="M dd, yy"></p-calendar>
     
         <div style="display: flex; align-items: center; justify-content: space-between;">
-            <span class="title"> Trainings </span>
+            <span class="card-title"> Trainings </span>
 
             <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <p-button icon="pi pi-sort-alt" [outlined]="!changeTrainingOrder" severity="secondary" (click)="toggleChangeTrainingOrder()" *ngIf="trainings.length !== 0"></p-button>
-                <button type="button" pButton pRipple icon="pi pi-plus" (click)="openTrainingAddDialog()"></button>
+                <p-button icon="pi pi-plus" (click)="openTrainingAddDialog()"></p-button>
             </div>
         </div>
     
         <div class="list">
-            <div class="list-item" *ngFor="let training of this.trainings">
-
-                <div (click)="gotoTrainingDetail(training)">
+            <div class="list-item" *ngFor="let training of this.trainings" (click)="gotoTrainingDetail(training)">
+                <div>
                     {{training.order}} - {{training.name}}
                 </div>
 
@@ -51,7 +50,7 @@
 
 <ng-container *ngIf="trainingProgram.loading">
     <div class="card">
-        <div class="title">
+        <div class="card-title">
             <i class="pi pi-spin pi-spinner"></i>
             Loading ...
         </div>
@@ -60,7 +59,7 @@
 
 <ng-container *ngIf="trainingProgram.noData">
     <div class="card">
-        <div class="title">
+        <div class="card-title">
             <i class="pi pi-info-circle"></i>
             Training Program do not exists
         </div>

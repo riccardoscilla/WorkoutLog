@@ -80,7 +80,7 @@ export class TrainingProgramDetailComponent implements OnInit {
     this.firestore.patchTrainingProgram(this.trainingProgram)
       .then(() => {
         this.messageService.clear()
-        this.messageService.add({severity: 'success', detail: 'Training Program Saved' })
+        this.messageService.add({severity: 'success', detail: 'Training Program Saved'})
         this.router.navigate(['training-program', this.trainingProgram.id])
       })
   }

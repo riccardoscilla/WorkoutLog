@@ -1,20 +1,28 @@
 <p-toast position="top-center"></p-toast>
 
 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-    <span style="font-size: 18px; font-weight: 700;"> Training Programs </span>
-    <button type="button" pButton pRipple icon="pi pi-plus" (click)="openTrainingProgramDialog()"></button>
+    <span class="title"> Training Programs </span>
+    <p-button icon="pi pi-plus" (click)="openTrainingProgramDialog()"></p-button>
 </div>
 
 <ng-container *ngIf="trainingProgram.isData">
 
     <div style="display: flex; flex-direction: column; gap: 16px;">
         <div *ngFor="let trainingProgram of trainingPrograms" class="card">
-            <div class="header" (click)="gotoTrainingProgramDetail(trainingProgram)">
-                <div class="title">
+            <div style="display: flex; align-items: center; justify-content: space-between;" (click)="gotoTrainingProgramDetail(trainingProgram)">
+                <div class="card-title">
                     {{trainingProgram.name}}
                 </div>
-                <div class="info-right">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                     {{trainingProgram.date | date:'mediumDate'}}
+                </div>
+            </div>
+
+            <div class="list">
+                <div class="list-item" *ngFor="let training of getTrainingsOf(trainingProgram)" (click)="gotoTrainingDetail(training)">
+                    <div>
+                        {{training.order}} - {{training.name}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -24,7 +32,7 @@
 
 <ng-container *ngIf="trainingProgram.loading">
     <div class="card">
-        <div class="title">
+        <div class="card-title">
             <i class="pi pi-spin pi-spinner"></i>
             Loading ...
         </div>
@@ -33,7 +41,7 @@
 
 <ng-container *ngIf="trainingProgram.noData">
     <div class="card">
-        <div class="title">
+        <div class="card-title">
             <i class="pi pi-info-circle"></i>
             No Training Programs
         </div>

@@ -170,10 +170,6 @@ export class TrainingDetailComponent implements OnInit {
     this.trainingExerciseAddDialog.visible = true
   }
 
-  gotoTrainingProgramList() {
-    this.router.navigate(['training-program'])
-  }
-
   gotoTrainingProgramDetail() {
     this.router.navigate(['training-program', this.training.trainingProgramId])
   }

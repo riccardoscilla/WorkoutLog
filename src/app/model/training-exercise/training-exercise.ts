@@ -36,7 +36,8 @@ export class TrainingExercise {
             'order': this.order,
             'trainingId': this.trainingId,
             'exerciseId': this.exerciseId,
-            'reps': this.reps.map(rep => rep.toDocumentValue())
+            'reps': this.reps.map(rep => rep.toDocumentValue()),
+            'note': this.note
         }
     }
 
@@ -46,5 +47,9 @@ export class TrainingExercise {
 
     removeRep() {
         this.reps.pop()
+    }
+
+    hasNote(): boolean {
+        return this.note !== undefined && this.note.trim() !== ""
     }
 }

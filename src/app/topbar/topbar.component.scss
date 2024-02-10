@@ -1,6 +1,5 @@
 @import '../../styles/variables.scss';
 
-
 .main {
     width: 100vw;
     height: 100%;
@@ -11,20 +10,4 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-}
-
-.user {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-
-    // background-color: beige;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    i {
-        font-size: 2rem;
-    }
 }

@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Firestore } from 'src/app/service/firestore.service';
 import { DocumentData } from '@angular/fire/compat/firestore';
 import { sortByProperty } from 'src/app/common/utils';
+import { Training } from 'src/app/model/training/training';
 
 @Component({
   selector: 'app-training-program-list',
@@ -16,6 +17,7 @@ import { sortByProperty } from 'src/app/common/utils';
 export class TrainingProgramListComponent implements OnInit {
   trainingProgram: TrainingProgram = new TrainingProgram()
   trainingPrograms: TrainingProgram[] = []
+  trainings: Training[] = []
   trainingProgramAddDialog: TrainingProgramAddDialog = new TrainingProgramAddDialog()
 
   constructor(
@@ -41,12 +43,29 @@ export class TrainingProgramListComponent implements OnInit {
           this.trainingPrograms = response.map((data: DocumentData) => TrainingProgram.fromSnapshot(data.payload.doc))
           this.trainingPrograms = sortByProperty(this.trainingPrograms, 'date')
           this.trainingProgram.isData()
+          this.getTrainings()
         }
       },
       error: (error) => {
         alert('Error while fetching trainings')
       }
     })
+  }
+
+  getTrainings() {
+    this.firestore.getTrainings().subscribe({
+      next: (response) => {
+        this.trainings = response.map((data: DocumentData) => Training.fromSnapshot(data.payload.doc))
+        this.trainings = sortByProperty(this.trainings, 'order')
+      },
+      error: (error) => {
+        alert('Error while fetching trainings')
+      }
+    })
+  }
+
+  getTrainingsOf(trainingProgram: TrainingProgram): Training[] {
+    return this.trainings.filter(training => training.trainingProgramId === trainingProgram.id)
   }
 
   gotoTrainingProgramDetail(trainingProgram: TrainingProgram) {
@@ -64,6 +83,10 @@ export class TrainingProgramListComponent implements OnInit {
         this.messageService.clear()
         this.messageService.add({severity: 'success', detail: 'Training Program Added' })
       })
+  }
+
+  gotoTrainingDetail(training: Training) {
+    this.router.navigate(['training', training.id])
   }
 
 }
