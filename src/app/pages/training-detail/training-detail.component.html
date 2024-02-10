@@ -45,7 +45,7 @@
                             </span>
                         </div>
                         <div>
-                            Reps: <span *ngFor="let rep of trainingExercise.reps">{{rep.toDocumentValue()}}</span>
+                            Reps: <span>{{repsString(trainingExercise.reps)}}</span>
                         </div>
                         <div *ngIf="trainingExercise.hasNote()">
                             Note: <span>{{trainingExercise.note}}</span>

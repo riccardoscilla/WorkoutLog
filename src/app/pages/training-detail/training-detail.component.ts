@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { DocumentData } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/auth/auth.service';
 import { capitalizeWords, getLastItem, getLastOrder, groupByKey, sortByProperty, swapItems } from 'src/app/common/utils';
 import { Exercise } from 'src/app/model/exercise/exercise';
+import { Rep } from 'src/app/model/training-exercise/rep';
 import { TrainingExercise } from 'src/app/model/training-exercise/training-exercise';
 import { TrainingExerciseAddDialog } from 'src/app/model/training-exercise/training-exercise-add-dialog';
-import { TrainingProgram } from 'src/app/model/training-program/training-program';
 import { Training } from 'src/app/model/training/training';
-import { TrainingAddDialog } from 'src/app/model/training/training-add-dialog';
 import { Firestore } from 'src/app/service/firestore.service';
 
 @Component({
@@ -125,7 +124,7 @@ export class TrainingDetailComponent implements OnInit {
     if (this.trainingExerciseAddDialog.trainingExercise.trainingId !== undefined) {
       this.firestore.patchTrainingExercise(this.trainingExerciseAddDialog.trainingExercise)
       .then(() => {
-        this.trainingExerciseAddDialog = new TrainingExerciseAddDialog()
+        this.trainingExerciseAddDialog = new TrainingExerciseAddDialog() // close dialog when save
         this.messageService.clear()
         this.messageService.add({severity: 'success', detail: 'Training Exercise Updated' })
       })
@@ -136,7 +135,7 @@ export class TrainingDetailComponent implements OnInit {
     this.trainingExerciseAddDialog.trainingExercise.order = getLastOrder(this.trainingExercises)
     this.firestore.addTrainingExercise(this.trainingExerciseAddDialog.trainingExercise)
       .then(() => {
-        this.trainingExerciseAddDialog = new TrainingExerciseAddDialog()
+        this.trainingExerciseAddDialog = new TrainingExerciseAddDialog() // close dialog when save
         this.messageService.clear()
         this.messageService.add({severity: 'success', detail: 'Training Exercise Added' })
       })
@@ -165,7 +164,7 @@ export class TrainingDetailComponent implements OnInit {
 
   editTrainingExerciseAddDialog(trainingExercise: TrainingExercise) {
     this.trainingExerciseAddDialog = new TrainingExerciseAddDialog()
-    this.trainingExerciseAddDialog.trainingExercise = trainingExercise
+    this.trainingExerciseAddDialog.trainingExercise = TrainingExercise.fromTrainingExercise(trainingExercise)
     this.trainingExerciseAddDialog.header = "Edit Training Exercise"
     this.trainingExerciseAddDialog.visible = true
   }
@@ -174,9 +173,13 @@ export class TrainingDetailComponent implements OnInit {
     this.router.navigate(['training-program', this.training.trainingProgramId])
   }
 
-   // Training Exercise Order 
+  repsString(reps: Rep[]): string {
+    return reps.map(rep => rep.toDocumentValue()).join(", ")
+  }
 
-   toggleChangeTrainingExerciseOrder() {
+  // Training Exercise Order 
+
+  toggleChangeTrainingExerciseOrder() {
     this.changeTrainingExerciseOrder = !this.changeTrainingExerciseOrder
   }
 

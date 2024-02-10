@@ -17,6 +17,13 @@ export class Rep {
         return rep
     } 
 
+    static fromRep(r: Rep): Rep {
+        const rep = new Rep()
+        rep.value = r.value
+        rep.max = r.max
+        return rep
+    }
+
     toDocumentValue(): String {
         if (this.value !== undefined && this.value > 0 && this.max === false)
             return this.value.toString()

@@ -2,6 +2,7 @@ import { DocumentData, DocumentSnapshot } from "@angular/fire/compat/firestore"
 import { Rep } from "./rep"
 import { TrainingExerciseDocument } from "./training-exercise-document"
 import { Exercise } from "../exercise/exercise"
+import { getLastItem } from "src/app/common/utils"
 
 export class TrainingExercise {
     id: string
@@ -11,7 +12,7 @@ export class TrainingExercise {
 
     reps: Rep[] = []
 
-    note?: string
+    note: string = ""
 
     static fromSnapshot(snapshot: DocumentSnapshot<DocumentData>): TrainingExercise {
         const trainingExercise = new TrainingExercise()
@@ -23,6 +24,19 @@ export class TrainingExercise {
         trainingExercise.reps = snapshot.data()!.reps.map((rep: string) => Rep.fromDocument(rep))
 
         trainingExercise.note = snapshot.data()!.note
+        return trainingExercise
+    }
+
+    static fromTrainingExercise(te: TrainingExercise): TrainingExercise {
+        const trainingExercise = new TrainingExercise()
+        trainingExercise.id = te.id
+        trainingExercise.order = te.order
+        trainingExercise.trainingId = te.trainingId
+        trainingExercise.exerciseId = te.exerciseId
+
+        trainingExercise.reps = te.reps.map(rep => Rep.fromRep(rep))
+
+        trainingExercise.note = te.note
         return trainingExercise
     }
 
@@ -42,7 +56,16 @@ export class TrainingExercise {
     }
 
     addRep() {
-        this.reps.push(new Rep())
+        const lastRep = getLastItem(this.reps)
+        if (lastRep === undefined) {
+            this.reps.push(new Rep())
+        }
+        else { // add rep with equal values of the last inserted
+            const rep = new Rep()
+            rep.value = lastRep!!.value
+            rep.max = lastRep!!.max
+            this.reps.push(rep)
+        }
     }
 
     removeRep() {
