@@ -12,6 +12,8 @@ export class TrainingExercise {
 
     reps: Rep[] = []
 
+    recover: number
+
     note: string = ""
 
     static fromSnapshot(snapshot: DocumentSnapshot<DocumentData>): TrainingExercise {
@@ -21,7 +23,8 @@ export class TrainingExercise {
         trainingExercise.trainingId = snapshot.data()!.trainingId
         trainingExercise.exerciseId = snapshot.data()!.exerciseId
 
-        trainingExercise.reps = snapshot.data()!.reps.map((rep: string) => Rep.fromDocument(rep))
+        trainingExercise.reps = snapshot.data()!.reps.map((rep: Rep) => Rep.fromDocument(rep))
+        trainingExercise.recover = snapshot.data()!.recover
 
         trainingExercise.note = snapshot.data()!.note
         return trainingExercise
@@ -35,6 +38,7 @@ export class TrainingExercise {
         trainingExercise.exerciseId = te.exerciseId
 
         trainingExercise.reps = te.reps.map(rep => Rep.fromRep(rep))
+        trainingExercise.recover = te.recover
 
         trainingExercise.note = te.note
         return trainingExercise
@@ -42,7 +46,9 @@ export class TrainingExercise {
 
     isValid() {
         return this.exerciseId != undefined 
-            && this.reps.map(rep => rep.toDocumentValue()).filter(value => value === '').length === 0
+            && this.reps.length > 0
+            && this.reps.map(rep => rep.isValid()).filter(valid => valid === false).length === 0
+            && this.recover != undefined
     }
 
     toDocument(): object {
@@ -50,26 +56,10 @@ export class TrainingExercise {
             'order': this.order,
             'trainingId': this.trainingId,
             'exerciseId': this.exerciseId,
-            'reps': this.reps.map(rep => rep.toDocumentValue()),
+            'reps': this.reps.map(rep => rep.toDocument()),
+            'recover': this.recover,
             'note': this.note
         }
-    }
-
-    addRep() {
-        const lastRep = getLastItem(this.reps)
-        if (lastRep === undefined) {
-            this.reps.push(new Rep())
-        }
-        else { // add rep with equal values of the last inserted
-            const rep = new Rep()
-            rep.value = lastRep!!.value
-            rep.max = lastRep!!.max
-            this.reps.push(rep)
-        }
-    }
-
-    removeRep() {
-        this.reps.pop()
     }
 
     hasNote(): boolean {

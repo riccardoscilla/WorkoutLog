@@ -71,3 +71,15 @@ export function swapItems<T>(list: T[], index1: number, index2: number): T[] {
 
   return newList;
 }
+
+export function getContrastColor(hexColor: string) {
+  // Convert hex color to RGB
+  const r = parseInt(hexColor.slice(1, 3), 16);
+  const g = parseInt(hexColor.slice(3, 5), 16);
+  const b = parseInt(hexColor.slice(5, 7), 16);
+  // Calculate relative luminance
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+  // Choose white or black text color based on contrast
+  return luminance > 0.5 ? '#000000' : '#ffffff';
+}

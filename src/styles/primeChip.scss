@@ -1,7 +1,11 @@
 
-.p-chip {
-
-    .p-chip-icon {
-        margin: 0 !important;
+p-chip {
+    >div {
+        border: 2px solid #dee2e6;
+    }
+    &.editing {
+        >div {
+            border: 2px solid $bg_color;
+        }
     }
 }

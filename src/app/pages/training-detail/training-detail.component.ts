@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { DocumentData } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { retry } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { capitalizeWords, getLastItem, getLastOrder, groupByKey, sortByProperty, swapItems } from 'src/app/common/utils';
+import { capitalizeWords, getContrastColor, getLastItem, getLastOrder, groupByKey, sortByProperty, swapItems } from 'src/app/common/utils';
 import { Exercise } from 'src/app/model/exercise/exercise';
 import { Rep } from 'src/app/model/training-exercise/rep';
 import { TrainingExercise } from 'src/app/model/training-exercise/training-exercise';
@@ -101,10 +102,6 @@ export class TrainingDetailComponent implements OnInit {
     })
   }
 
-  getExercise(trainingExercise: TrainingExercise): Exercise {
-    return this.exercises.find(e => e.id === trainingExercise.exerciseId)!!
-  }
-
   saveTraining() {
     let order = 0
     this.trainingExercises.forEach(trainingExercise => {
@@ -133,6 +130,8 @@ export class TrainingDetailComponent implements OnInit {
 
     this.trainingExerciseAddDialog.trainingExercise.trainingId = this.training.id
     this.trainingExerciseAddDialog.trainingExercise.order = getLastOrder(this.trainingExercises)
+
+    console.log(this.trainingExerciseAddDialog.trainingExercise)
     this.firestore.addTrainingExercise(this.trainingExerciseAddDialog.trainingExercise)
       .then(() => {
         this.trainingExerciseAddDialog = new TrainingExerciseAddDialog() // close dialog when save
@@ -157,6 +156,13 @@ export class TrainingDetailComponent implements OnInit {
       .then(() => this.gotoTrainingProgramDetail())
   }
 
+  deleteTrainingExercise() {
+    this.firestore.deleteTrainingExercise(this.trainingExerciseAddDialog.trainingExercise)
+      .then(() => this.trainingExerciseAddDialog = new TrainingExerciseAddDialog() )
+  }
+
+  // Training Exercise Reps Dialog
+
   openTrainingExerciseAddDialog() {
     this.trainingExerciseAddDialog = new TrainingExerciseAddDialog()
     this.trainingExerciseAddDialog.visible = true
@@ -169,12 +175,69 @@ export class TrainingDetailComponent implements OnInit {
     this.trainingExerciseAddDialog.visible = true
   }
 
+  toggleEditRep(rep: Rep) {
+    if (this.isEditingRep(rep)) 
+      this.trainingExerciseAddDialog.rep = new Rep()
+    else 
+      this.trainingExerciseAddDialog.rep = Rep.fromRep(rep)
+  }
+
+  isEditingRep(rep: Rep): boolean {
+    return rep.order === this.trainingExerciseAddDialog.rep.order
+  }
+
+  isEditing(): boolean {
+    return this.trainingExerciseAddDialog.rep.order !== undefined
+  }
+
+  addRep() {
+    // add new rep in training exercise. keep the values in the dialog 
+    const newRep = Rep.fromRep(this.trainingExerciseAddDialog.rep)
+    newRep.order = getLastOrder(this.trainingExerciseAddDialog.trainingExercise.reps)
+    this.trainingExerciseAddDialog.trainingExercise.reps.push(newRep)
+  }
+
+  saveRep() {
+    // update selected rep in training exercise. keep the values in the dialog 
+    const toUpdateRep = this.trainingExerciseAddDialog.trainingExercise.reps.find(r => r.order === this.trainingExerciseAddDialog.rep.order)!!
+    toUpdateRep.value = this.trainingExerciseAddDialog.rep.value
+    toUpdateRep.max = this.trainingExerciseAddDialog.rep.max
+    this.trainingExerciseAddDialog.rep = new Rep()
+    this.trainingExerciseAddDialog.rep.value = toUpdateRep.value
+    this.trainingExerciseAddDialog.rep.max = toUpdateRep.max
+  }
+
+  removeRep() {
+    const toRemoveRep = this.trainingExerciseAddDialog.trainingExercise.reps.find(r => r.order === this.trainingExerciseAddDialog.rep.order)!!
+    this.trainingExerciseAddDialog.trainingExercise.reps = this.trainingExerciseAddDialog.trainingExercise.reps.filter(rep => rep.order !== toRemoveRep.order)
+    this.trainingExerciseAddDialog.rep = new Rep()
+  }
+
   gotoTrainingProgramDetail() {
     this.router.navigate(['training-program', this.training.trainingProgramId])
   }
 
+  // Styles and redering
+
   repsString(reps: Rep[]): string {
-    return reps.map(rep => rep.toDocumentValue()).join(", ")
+    return reps.map(rep => rep.toString()).join(", ")
+  }
+
+  exerciseName(trainingExercise: TrainingExercise) {
+    const e = this.exercises.find(e => e.id === trainingExercise.exerciseId)!!
+    return capitalizeWords(e.name)
+  }
+
+  exerciseGroup(trainingExercise: TrainingExercise) {
+    const e = this.exercises.find(e => e.id === trainingExercise.exerciseId)!!
+    return capitalizeWords(e.group)
+  }
+
+  exerciseGroupChipStyle() {
+    return {
+      'background-color': '#ae3c60',
+      'color': getContrastColor('#ae3c60')
+    }
   }
 
   // Training Exercise Order 
@@ -200,6 +263,5 @@ export class TrainingDetailComponent implements OnInit {
     const index1 = this.trainingExercises.indexOf(trainingExercise)
     this.trainingExercises = swapItems(this.trainingExercises, index1, index1 - 1)
   }
-
 
 }
