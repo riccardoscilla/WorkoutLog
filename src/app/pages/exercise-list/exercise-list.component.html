@@ -1,0 +1,69 @@
+<p-toast position="top-center"></p-toast>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <span class="title"> Exercises </span>
+    <p-button icon="pi pi-plus" (click)="openExerciseDialog()"></p-button>
+</div>
+
+<ng-container *ngIf="exercise.isData">
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div *ngFor="let item of exercisesGrouped | keyvalue" class="card">
+
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="card-title">
+                    {{item.key | capitalizeWords}}
+                </div>
+            </div>
+
+            <div class="list">
+                <div class="list-item" *ngFor="let exercise of item.value" (click)="gotoExerciseDetail(exercise)">
+                    <div>
+                        {{exercise.name | capitalizeWords}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ng-container>
+
+<ng-container *ngIf="exercise.loading">
+    <div class="card">
+        <div class="card-title">
+            <i class="pi pi-spin pi-spinner"></i>
+            Loading ...
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="exercise.noData">
+    <div class="card">
+        <div class="card-title">
+            <i class="pi pi-info-circle"></i>
+            No Exercises
+        </div>
+    </div>
+</ng-container>
+
+<p-dialog [(visible)]="exerciseAddDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="header">
+        <span class="text-xl font-bold">{{exerciseAddDialog.header}}</span>
+    </ng-template>
+    <ng-template pTemplate="content">
+
+        <div class="card" style="height: 100%;">
+            <label>Name</label>
+            <input pInputText [(ngModel)]="exerciseAddDialog.exercise.name"/>
+
+            <label>Group</label>
+            <p-dropdown [options]="groupDropdownOptions" [(ngModel)]="exerciseAddDialog.exercise.group"
+                optionLabel="label" optionValue="id" appendTo="body"></p-dropdown>
+            
+        </div>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Save" (click)="saveExercise()" [disabled]="!exerciseAddDialog.exercise.isValid()"></p-button>
+    </ng-template>
+</p-dialog>

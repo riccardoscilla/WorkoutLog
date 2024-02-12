@@ -21,7 +21,7 @@ import { PasswordModule } from 'primeng/password';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
-
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 
 @NgModule({
   exports: [
@@ -45,7 +45,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
     PasswordModule,
     TooltipModule,
     CheckboxModule,
-    RadioButtonModule
+    RadioButtonModule,
+    BreadcrumbModule
   ]
 })
 export class PrimeNgModule {}

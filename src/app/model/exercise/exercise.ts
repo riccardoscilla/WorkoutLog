@@ -1,6 +1,7 @@
 import { DocumentData, DocumentSnapshot } from "@angular/fire/compat/firestore"
+import { Data } from "src/app/common/data"
 
-export class Exercise {
+export class Exercise extends Data {
   id: string
   name: string
   group: string
@@ -11,6 +12,13 @@ export class Exercise {
     exercise.name = snapshot.data()!.name
     exercise.group = snapshot.data()!.group
     return exercise
+  }
+
+  toDocument() {
+    return {
+      'name': this.name,
+      'group': this.group
+    }
   }
   
   isValid(): boolean {

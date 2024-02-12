@@ -47,7 +47,8 @@ export class TrainingProgramListComponent implements OnInit {
         }
       },
       error: (error) => {
-        alert('Error while fetching trainings')
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: 'Error getting Training Programs' })
       }
     })
   }

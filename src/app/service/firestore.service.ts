@@ -23,9 +23,24 @@ export class Firestore {
     return this.firestore.collection('user').doc(user.uid).collection('exercise').snapshotChanges()
   }
 
+  getExercise(exerciseId: string) {
+    const user = this.authService.userInLocalStorage
+    return this.firestore.collection('user').doc(user.uid).collection('exercise').doc(exerciseId).snapshotChanges()
+  }
+
   addExercise(exercise: Exercise) {
     const user = this.authService.userInLocalStorage
     return this.firestore.collection('user').doc(user.uid).collection('exercise').add({...exercise})
+  }
+
+  patchExercise(exercise: Exercise) {
+    const user = this.authService.userInLocalStorage
+    return this.firestore.collection('user').doc(user.uid).collection('exercise').doc(exercise.id).update(exercise.toDocument())
+  }
+
+  deleteExercise(exercise: Exercise) {
+    const user = this.authService.userInLocalStorage
+    return this.firestore.collection('user').doc(user.uid).collection('exercise').doc(exercise.id).delete()
   }
 
   // Training Program

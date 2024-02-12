@@ -13,8 +13,7 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 import { FormsModule } from '@angular/forms';
 import { PrimeNgModule } from './primeng.module';
 import { MenuBottomComponent } from './menu-bottom/menu-bottom.component';
-import { ExerciseListComponent } from './exercise/exercise-list/exercise-list.component';
-import { ExerciseAddComponent } from './exercise/exercise-add/exercise-add.component';
+import { ExerciseListComponent } from './pages/exercise-list/exercise-list.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { UserComponent } from './user/user.component';
 import { TrainingProgramListComponent } from './pages/training-program-list/training-program-list.component';
@@ -22,6 +21,8 @@ import { TrainingProgramDetailComponent } from './pages/training-program-detail/
 import { TrainingDetailComponent } from './pages/training-detail/training-detail.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MessageService } from 'primeng/api';
+import { CapitalizeWordsPipe } from './common/capitalize-words.pipe';
+import { ExerciseDetailComponent } from './pages/exercise-detail/exercise-detail.component';
 
 @NgModule({
   declarations: [
@@ -29,13 +30,14 @@ import { MessageService } from 'primeng/api';
     SignInComponent,
     SignUpComponent,
     MenuBottomComponent,
-    ExerciseListComponent,
-    ExerciseAddComponent,
     TopbarComponent,
     UserComponent,
+    ExerciseListComponent,
     TrainingProgramListComponent,
     TrainingProgramDetailComponent,
     TrainingDetailComponent,
+    CapitalizeWordsPipe,
+    ExerciseDetailComponent,
   ],
   imports: [
     BrowserModule,
