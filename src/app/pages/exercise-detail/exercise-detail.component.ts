@@ -13,7 +13,7 @@ import { Firestore } from 'src/app/service/firestore.service';
   providers: [ConfirmationService, MessageService]
 })
 export class ExerciseDetailComponent {
-  header: String
+  header: String = "Exercise Detail"
   exercise: Exercise = new Exercise()
   exercises: Exercise[] = []
   exercisesGrouped: Map<string, Exercise[]> = new Map()

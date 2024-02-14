@@ -6,13 +6,14 @@
 }
   
 .body {
-  height: calc(100vh - $menu-height - $menu-height);
+  // height: calc(100vh - $menu-height);
   // height: 100vh;
-  overflow-y: scroll;
-  margin-top: $topbar-height;
+  // overflow-y: scroll;
+  // margin-top: $topbar-height;
   margin-bottom: $menu-height;
   padding: 8px;
-  padding-top: 16px;
+  // padding-top:;
+  // padding-top: 16px;
 }
 
 .menu {

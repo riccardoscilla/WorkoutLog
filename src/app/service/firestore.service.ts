@@ -71,9 +71,6 @@ export class Firestore {
       next: (response) => {
         const trainings = response.map((data: DocumentData) => Training.fromSnapshot(data.payload.doc))
         trainings.forEach(training => this.deleteTraining(training))
-      },
-      error: (error) => {
-        alert('Error while fetching trainings')
       }
     }) 
     return this.firestore.collection('user').doc(user.uid).collection('trainingProgram').doc(trainingProgram.id).delete()

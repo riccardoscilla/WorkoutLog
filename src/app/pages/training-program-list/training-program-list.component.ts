@@ -60,7 +60,8 @@ export class TrainingProgramListComponent implements OnInit {
         this.trainings = sortByProperty(this.trainings, 'order')
       },
       error: (error) => {
-        alert('Error while fetching trainings')
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: 'Error getting Trainings' })
       }
     })
   }

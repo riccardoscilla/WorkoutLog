@@ -1,16 +1,26 @@
 <p-toast position="top-center"></p-toast>
 
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0 8px 0;">
+    <div (click)="gotoTrainingProgramList()" style="align-self: flex-end;">
+        <i class="pi pi-chevron-left" style="font-size: 14px; padding:0 8px 0 8px;"></i>
+        <span class="back-font">Training Program List</span>
+    </div>
+</div>
+
+<div *ngIf="!trainingProgram.data" style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px 8px;">
+    <span class="title"> {{header}} </span>
+</div>
+
 <ng-container *ngIf="trainingProgram.data">
 
-    <div style="height: 40px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px 8px;">
         <div>
-            <i class="pi pi-chevron-left" style="font-size: 16px; margin-right: 8px; padding: 8px" (click)="gotoTrainingProgramList()"></i>
             <span class="title"> {{header}} </span>
         </div>
-    
-        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+
+        <div style="display: flex; align-items: center; gap: 8px;">
             <p-button icon="pi pi-trash" [outlined]="true" severity="danger" (click)="confirmDelete()"></p-button>
-            <p-button icon="pi pi-save" (click)="saveTrainingProgram()"></p-button>
+            <p-button icon="pi pi-save" (click)="deleteTrainingProgram()"></p-button>
         </div>
     </div>
 

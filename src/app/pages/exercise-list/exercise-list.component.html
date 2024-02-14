@@ -1,11 +1,11 @@
 <p-toast position="top-center"></p-toast>
 
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-    <span class="title"> Exercises </span>
-    <p-button icon="pi pi-plus" (click)="openExerciseDialog()"></p-button>
-</div>
-
 <ng-container *ngIf="exercise.isData">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0 8px 8px;">
+        <span class="title"> Exercises </span>
+        <p-button icon="pi pi-plus" (click)="openExerciseDialog()"></p-button>
+    </div>
 
     <div style="display: flex; flex-direction: column; gap: 16px;">
         <div *ngFor="let item of exercisesGrouped | keyvalue" class="card">

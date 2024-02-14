@@ -1,14 +1,24 @@
 <p-toast position="top-center"></p-toast>
 
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0 8px 0;">
+    <div (click)="gotoExerciseList()" style="align-self: flex-end;">
+        <i class="pi pi-chevron-left" style="font-size: 14px; padding:0 8px 0 8px;"></i>
+        <span class="back-font">Exercise List</span>
+    </div>
+</div>
+
+<div *ngIf="!exercise.data" style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px 8px;">
+    <span class="title"> {{header}} </span>
+</div>
+
 <ng-container *ngIf="exercise.data">
 
-    <div style="height: 40px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px 8px;">
         <div>
-            <i class="pi pi-chevron-left" style="font-size: 16px; margin-right: 8px; padding: 8px" (click)="gotoExerciseList()"></i>
             <span class="title"> {{header}} </span>
         </div>
-    
-        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+
+        <div style="display: flex; align-items: center; gap: 8px;">
             <p-button icon="pi pi-trash" [outlined]="true" severity="danger" (click)="confirmDelete()"></p-button>
             <p-button icon="pi pi-save" (click)="saveExercise()"></p-button>
         </div>
@@ -22,8 +32,6 @@
         <label>Group</label>
         <p-dropdown [options]="groupDropdownOptions" [(ngModel)]="exercise.group"
             optionLabel="label" optionValue="id" appendTo="body"></p-dropdown>
-       
-        
         
     </div>
     
@@ -47,22 +55,5 @@
         </div>
     </div>
 </ng-container>
-
-<!-- <p-dialog [(visible)]="trainingAddDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
-    <ng-template pTemplate="header">
-        <span class="text-xl font-bold">{{trainingAddDialog.header}}</span>
-    </ng-template>
-    <ng-template pTemplate="content">
-
-        <div class="card" style="height: 100%;">
-            <label>Name</label>
-            <input pInputText [(ngModel)]="trainingAddDialog.training.name"/>
-        </div>
-
-    </ng-template>
-    <ng-template pTemplate="footer">
-        <p-button label="Save" (click)="saveTraining()" [disabled]="!trainingAddDialog.training.isValid() || alreadyChoosedTraining()"></p-button>
-    </ng-template>
-</p-dialog> -->
 
 <p-confirmDialog [style]="{width: '90vw'}"></p-confirmDialog>

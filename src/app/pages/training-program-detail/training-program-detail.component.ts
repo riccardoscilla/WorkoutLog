@@ -16,7 +16,7 @@ import { Firestore } from 'src/app/service/firestore.service';
   providers: [ConfirmationService, MessageService]
 })
 export class TrainingProgramDetailComponent implements OnInit {
-  header: String
+  header: String = "Training Program Detail"
   trainingProgram: TrainingProgram = new TrainingProgram()
   trainings: Training[] = []
 
@@ -53,7 +53,8 @@ export class TrainingProgramDetailComponent implements OnInit {
         }
       },
       error: (error) => {
-        alert('Error while fetching training program')
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: 'Error getting Training Program' })
       }
     })
   }
@@ -65,7 +66,8 @@ export class TrainingProgramDetailComponent implements OnInit {
         this.trainings = sortByProperty(this.trainings, 'order')
       },
       error: (error) => {
-        alert('Error while fetching trainings')
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: 'Error getting Trainings' })
       }
     })
   }

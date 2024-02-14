@@ -19,7 +19,7 @@ import { Firestore } from 'src/app/service/firestore.service';
   providers: [ConfirmationService, MessageService]
 })
 export class TrainingDetailComponent implements OnInit {
-  header: String
+  header: String = "Training Program Detail"
   training: Training = new Training()
   trainingExercises: TrainingExercise[] = []
 
@@ -60,7 +60,8 @@ export class TrainingDetailComponent implements OnInit {
         }
       },
       error: (error) => {
-        alert('Error while fetching training')
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: 'Error getting Training' })
       }
     })
   }
@@ -72,7 +73,8 @@ export class TrainingDetailComponent implements OnInit {
         this.trainingExercises = sortByProperty(this.trainingExercises, 'order')
       },
       error: (error) => {
-        alert('Error while fetching training exercises')
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: 'Error getting Training Exercises' })
       }
     })
   }
@@ -97,7 +99,8 @@ export class TrainingDetailComponent implements OnInit {
         });
       },
       error: (error) => {
-        alert('Error while fetching training exercises')
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: 'Error getting Exercises' })
       }
     })
   }
