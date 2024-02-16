@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DateDialog } from './model/date-dialog';
 
 @Component({
   selector: 'app-workout',
@@ -8,7 +9,7 @@ import { Component } from '@angular/core';
 export class WorkoutComponent {
   workout: any
   day = new Date()
-
+  dateDialog = new DateDialog()
 
 
   minusDay() {
@@ -24,4 +25,18 @@ export class WorkoutComponent {
     let newTimestamp = timestamp + oneDayInMilliseconds
     this.day = new Date(newTimestamp)
   }
+
+  setTodayAndClose() {
+    this.day = new Date()
+    this.closeDateDialog()
+  }
+
+  openDateDialog() {
+    this.dateDialog.visible = true
+  }
+
+  closeDateDialog() {
+    this.dateDialog.visible = false
+  }
+
 }

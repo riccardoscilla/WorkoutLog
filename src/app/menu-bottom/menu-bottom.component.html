@@ -12,7 +12,7 @@
   </div>
 
   <div class="menuitem" (click)="gotoWorkout()">
-    <i class='bx bxs-hot iconmain'></i>
+    <i class='bx bxs-hot iconmain' [ngClass]="{'selected': getActivatedRoute('workout')}"></i>
   </div>
 
   <!-- <div class="menuitem">

@@ -55,6 +55,10 @@ main {
   background-color: $text_color;
   color: $bg_color;
   border-radius: 50%;
+
+  &.selected {
+    box-shadow: inset 0 0 0 2px $text_color, inset 0 0 0 4px $bg_color;
+  }
 }
 
 .menuitem .text {
@@ -63,6 +67,7 @@ main {
   // overflow: hidden;
 
   font-size: 14px;
+  padding-bottom: 5px;
   // text-align: center;
 }
 

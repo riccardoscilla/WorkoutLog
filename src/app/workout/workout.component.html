@@ -5,22 +5,21 @@
 </div>
 
 <div style="display: flex; justify-content: space-between; padding-bottom: 8px;">
-    <div (click)="minusDay()">
-        <i class="pi pi-chevron-left" style="font-size: 14px; padding:0 8px 0 8px;"></i>
-    </div>
+    <p-chip (click)="minusDay()">
+        <i class="pi pi-chevron-left" style="font-size: 14px; height: 20px; line-height: 20px;"></i>
+    </p-chip>
 
-    <div>
+    <div (click)="openDateDialog()">
         {{day | date:'longDate'}}
     </div>
 
-    <div (click)="plusDay()">
-        <i class="pi pi-chevron-right" style="font-size: 14px; padding:0 8px 0 8px;"></i>
-    </div>
+    <p-chip (click)="plusDay()">
+        <i class="pi pi-chevron-right" style="font-size: 14px; height: 20px; line-height: 20px;"></i>
+    </p-chip>
 </div>
 
 <ng-container *ngIf="!workout">
     <div class="card">
-        <!-- <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" class="bg-white"></p-button> -->
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <span class="card-title"> Add Workout </span>
 
@@ -32,3 +31,49 @@
 
 </ng-container>
 
+
+<p-dialog [(visible)]="dateDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="header">
+        <span class="text-xl font-bold">{{dateDialog.header}}</span>
+    </ng-template>
+    <ng-template pTemplate="content">
+
+        <div class="card">
+            <!-- <label>Date</label> -->
+            <p-calendar [(ngModel)]="day" [inline]="true" dateFormat="M dd, yy">
+                <ng-template pTemplate="footer">
+                    <p-button label="Today" (click)="setTodayAndClose()"></p-button>
+                </ng-template>
+            </p-calendar>
+
+            <!-- <p-button label="Today" (click)="setTodayAndClose()"></p-button> -->
+        </div>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Ok" (click)="closeDateDialog()"></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="dateDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="header">
+        <span class="text-xl font-bold">{{dateDialog.header}}</span>
+    </ng-template>
+    <ng-template pTemplate="content">
+
+        <div class="card">
+            <!-- <label>Date</label> -->
+            <p-calendar [(ngModel)]="day" [inline]="true" dateFormat="M dd, yy">
+                <ng-template pTemplate="footer">
+                    <p-button label="Today" (click)="setTodayAndClose()"></p-button>
+                </ng-template>
+            </p-calendar>
+
+            <!-- <p-button label="Today" (click)="setTodayAndClose()"></p-button> -->
+        </div>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Ok" (click)="closeDateDialog()"></p-button>
+    </ng-template>
+</p-dialog>

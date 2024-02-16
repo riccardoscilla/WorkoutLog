@@ -4,3 +4,14 @@ p-dropdown {
         width: 100%;
     }
 }
+
+
+p-calendar {
+    .p-datepicker-inline {
+        border: none;
+        height: 388px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+}
