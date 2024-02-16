@@ -39,7 +39,6 @@ export class AuthService {
   }
 
   signUp(signUpData: SignUp) {
-    console.log(signUpData)
     this.auth.createUserWithEmailAndPassword(signUpData.email, signUpData.password)
       .then((response) => {
         this.UserData = response.user

@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { capitalizeWords, groupByKey } from 'src/app/common/utils';
 import { DocumentData } from '@angular/fire/compat/firestore';
 import { ExerciseAddDialog } from 'src/app/model/exercise/exercise-add-dialog';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-exercise-list',
@@ -24,6 +25,7 @@ export class ExerciseListComponent implements OnInit {
   constructor(
     private firestore: Firestore,
     private messageService: MessageService,
+    private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -43,23 +45,28 @@ export class ExerciseListComponent implements OnInit {
         else {
           this.exercises = response.map((data: DocumentData) => Exercise.fromSnapshot(data.payload.doc))
           this.exercisesGrouped = groupByKey(this.exercises, "group")
+          this.setGroupDrowpdown()
           this.exercise.isData()
-
-          this.groupDropdownOptions = []
-          this.exercisesGrouped.forEach((value: Exercise[], key: string) => {
-            const option = {
-              label: capitalizeWords(key),
-              id: key
-            }
-            this.groupDropdownOptions.push(option)
-          });
         }
       },
       error: (error) => {
+        if (!this.authService.isLoggedIn)
+          return
         this.messageService.clear()
         this.messageService.add({severity: 'error', detail: 'Error getting Exercises' })
       }
     })
+  }
+
+  setGroupDrowpdown() {
+    this.groupDropdownOptions = []
+    this.exercisesGrouped.forEach((value: Exercise[], key: string) => {
+      const option = {
+        label: capitalizeWords(key),
+        id: key
+      }
+      this.groupDropdownOptions.push(option)
+    });
   }
 
   openExerciseDialog() {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentData, PERSISTENCE_SETTINGS } from '@angular/fire/compat/firestore';
+import { AngularFirestore, DocumentData } from '@angular/fire/compat/firestore';
 import { AuthService } from '../auth/auth.service';
 import { Exercise } from '../model/exercise/exercise';
 import { TrainingProgram } from '../model/training-program/training-program';
@@ -30,7 +30,7 @@ export class Firestore {
 
   addExercise(exercise: Exercise) {
     const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('exercise').add({...exercise})
+    return this.firestore.collection('user').doc(user.uid).collection('exercise').add(exercise.toDocument())
   }
 
   patchExercise(exercise: Exercise) {

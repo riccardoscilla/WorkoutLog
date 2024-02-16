@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { retry } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { capitalizeWords, getContrastColor, getLastItem, getLastOrder, groupByKey, sortByProperty, swapItems } from 'src/app/common/utils';
+import { capitalizeWords, getContrastColor, getLastItem, getLastOrder, groupByKey, sortByKey, swapItems } from 'src/app/common/utils';
 import { Exercise } from 'src/app/model/exercise/exercise';
 import { Rep } from 'src/app/model/training-exercise/rep';
 import { TrainingExercise } from 'src/app/model/training-exercise/training-exercise';
@@ -70,7 +70,7 @@ export class TrainingDetailComponent implements OnInit {
     this.firestore.getTrainingExercisesOfTraining(this.training.id).subscribe({
       next: (response) => {
         this.trainingExercises = response.map((data: DocumentData) => TrainingExercise.fromSnapshot(data.payload.doc))
-        this.trainingExercises = sortByProperty(this.trainingExercises, 'order')
+        this.trainingExercises = sortByKey(this.trainingExercises, 'order')
       },
       error: (error) => {
         this.messageService.clear()

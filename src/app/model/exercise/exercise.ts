@@ -14,7 +14,7 @@ export class Exercise extends Data {
     return exercise
   }
 
-  toDocument() {
+  toDocument(): object {
     return {
       'name': this.name,
       'group': this.group

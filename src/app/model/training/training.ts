@@ -4,8 +4,8 @@ import { Data } from "src/app/common/data"
 export class Training extends Data {
     id: string
     name: string
-    trainingProgramId: string
     order: number
+    trainingProgramId: string
 
     static fromSnapshot(snapshot: DocumentSnapshot<DocumentData>): Training {
         const training = new Training()
@@ -21,7 +21,10 @@ export class Training extends Data {
     }
 
     toDocument(): object {
-        const { id, ...documentWithoutId } = this;
-        return documentWithoutId;
+        return {
+            'name': this.name,
+            'order': this.order,
+            'trainingProgramId': this.trainingProgramId
+        }
     }
 }

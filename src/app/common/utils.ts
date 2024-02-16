@@ -17,10 +17,10 @@ export function groupByKey<T>(list: T[], key: keyof T): Map<string, T[]> {
 }
 
 
-export function sortByProperty<T>(list: T[], propertyName: string): T[] {
+export function sortByKey<T>(list: T[], key: keyof T): T[] {
   return list.sort((a, b) => {
-    const propA = (a as any)[propertyName];
-    const propB = (b as any)[propertyName];
+    const propA = (a as any)[key];
+    const propB = (b as any)[key];
 
     if (typeof propA === 'number' && typeof propB === 'number') {
       return propA - propB;

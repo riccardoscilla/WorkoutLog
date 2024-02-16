@@ -23,6 +23,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { MessageService } from 'primeng/api';
 import { CapitalizeWordsPipe } from './common/capitalize-words.pipe';
 import { ExerciseDetailComponent } from './pages/exercise-detail/exercise-detail.component';
+import { WorkoutComponent } from './workout/workout.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { ExerciseDetailComponent } from './pages/exercise-detail/exercise-detail
     TrainingDetailComponent,
     CapitalizeWordsPipe,
     ExerciseDetailComponent,
+    WorkoutComponent,
   ],
   imports: [
     BrowserModule,

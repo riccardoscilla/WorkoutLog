@@ -5,7 +5,7 @@ import { MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Firestore } from 'src/app/service/firestore.service';
 import { DocumentData } from '@angular/fire/compat/firestore';
-import { sortByProperty } from 'src/app/common/utils';
+import { sortByKey } from 'src/app/common/utils';
 import { Training } from 'src/app/model/training/training';
 
 @Component({
@@ -29,6 +29,7 @@ export class TrainingProgramListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTrainingPrograms()
+    this.getTrainings()
   }
 
   getTrainingPrograms() {
@@ -41,9 +42,8 @@ export class TrainingProgramListComponent implements OnInit {
         }
         else {
           this.trainingPrograms = response.map((data: DocumentData) => TrainingProgram.fromSnapshot(data.payload.doc))
-          this.trainingPrograms = sortByProperty(this.trainingPrograms, 'date')
+          this.trainingPrograms = sortByKey(this.trainingPrograms, 'date')
           this.trainingProgram.isData()
-          this.getTrainings()
         }
       },
       error: (error) => {
@@ -57,7 +57,7 @@ export class TrainingProgramListComponent implements OnInit {
     this.firestore.getTrainings().subscribe({
       next: (response) => {
         this.trainings = response.map((data: DocumentData) => Training.fromSnapshot(data.payload.doc))
-        this.trainings = sortByProperty(this.trainings, 'order')
+        this.trainings = sortByKey(this.trainings, 'order')
       },
       error: (error) => {
         this.messageService.clear()

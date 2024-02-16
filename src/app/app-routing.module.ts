@@ -10,9 +10,10 @@ import { ExerciseDetailComponent } from './pages/exercise-detail/exercise-detail
 import { TrainingProgramListComponent } from './pages/training-program-list/training-program-list.component';
 import { TrainingProgramDetailComponent } from './pages/training-program-detail/training-program-detail.component';
 import { TrainingDetailComponent } from './pages/training-detail/training-detail.component';
+import { WorkoutComponent } from './workout/workout.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/training-program', pathMatch: 'full' },
+  { path: '', redirectTo: '/workout', pathMatch: 'full' },
 
   { path: 'sign-in', component: SignInComponent, canActivate: [AuthGuard] },
   { path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard] },
@@ -26,6 +27,8 @@ const routes: Routes = [
   { path: 'training-program/:trainingProgramId', component: TrainingProgramDetailComponent, canActivate: [SecureInnerPageGuard] },
 
   { path: 'training/:trainingId', component: TrainingDetailComponent, canActivate: [SecureInnerPageGuard] },
+
+  { path: 'workout', component: WorkoutComponent, canActivate: [SecureInnerPageGuard] },
 ]
 
 @NgModule({

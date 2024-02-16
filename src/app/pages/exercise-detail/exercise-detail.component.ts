@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { capitalizeWords, groupByKey } from 'src/app/common/utils';
 import { Exercise } from 'src/app/model/exercise/exercise';
+import { DataService } from 'src/app/service/data.service';
 import { Firestore } from 'src/app/service/firestore.service';
 
 @Component({

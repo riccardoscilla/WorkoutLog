@@ -3,7 +3,7 @@ import { DocumentData } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/auth/auth.service';
-import { getLastItem, getLastOrder, sortByProperty, swapItems } from 'src/app/common/utils';
+import { getLastItem, getLastOrder, sortByKey, swapItems } from 'src/app/common/utils';
 import { TrainingProgram } from 'src/app/model/training-program/training-program';
 import { Training } from 'src/app/model/training/training';
 import { TrainingAddDialog } from 'src/app/model/training/training-add-dialog';
@@ -63,7 +63,7 @@ export class TrainingProgramDetailComponent implements OnInit {
     this.firestore.getTrainingsOfTrainingProgram(this.trainingProgram.id).subscribe({
       next: (response) => {
         this.trainings = response.map((data: DocumentData) => Training.fromSnapshot(data.payload.doc))
-        this.trainings = sortByProperty(this.trainings, 'order')
+        this.trainings = sortByKey(this.trainings, 'order')
       },
       error: (error) => {
         this.messageService.clear()

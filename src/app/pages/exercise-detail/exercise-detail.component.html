@@ -13,12 +13,12 @@
 
 <ng-container *ngIf="exercise.data">
 
-    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px 8px;">
+    <div style="display: flex; justify-content: space-between; padding: 0 0 8px 8px;">
         <div>
             <span class="title"> {{header}} </span>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; gap: 8px;">
             <p-button icon="pi pi-trash" [outlined]="true" severity="danger" (click)="confirmDelete()"></p-button>
             <p-button icon="pi pi-save" (click)="saveExercise()"></p-button>
         </div>
@@ -26,7 +26,7 @@
 
     <div class="card">
     
-        <label>Name</label>
+        <label>Exercise Name</label>
         <input pInputText [(ngModel)]="exercise.name"/>
 
         <label>Group</label>

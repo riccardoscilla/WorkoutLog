@@ -1,30 +1,34 @@
 <main>
-  <div class="menuitem">
+  <div class="menuitem" (click)="gotoExerciseList()">
+    <div class="select-bar" [ngClass]="{'selected': getActivatedRoute('exercise')}"></div>
     <i class='bx bx-dumbbell icon' routerLink="exercise"></i>
     <div class="text">Exercise</div>
   </div>
 
-  <div class="menuitem">
-    <i class='bx bx-spreadsheet icon' routerLink="training-program"></i>
+  <div class="menuitem" (click)="gotoTrainingProgramList()">
+    <div class="select-bar" [ngClass]="{'selected': getActivatedRoute('training-program')}"></div>
+    <i class='bx bx-spreadsheet icon'></i>
     <div class="text">Program</div>
   </div>
 
+  <div class="menuitem" (click)="gotoWorkout()">
+    <i class='bx bxs-hot iconmain'></i>
+  </div>
+
   <!-- <div class="menuitem">
-    <i class='bx bx-plus-medical iconmain'></i>
+    <i class='bx bxs-hot icon'></i>
+    <div class="text">Log</div>
   </div> -->
 
   <div class="menuitem">
-    <i class='bx bx-book icon'></i>
-    <div class="text">Log</div>
-  </div>
-
-  <div class="menuitem">
+    <div class="select-bar" [ngClass]=""></div>
     <i class='bx bx-body icon'></i>
     <div class="text">Pliche</div>
   </div>
 
-  <div class="menuitem">
-    <i class='bx bx-user icon' routerLink="user"></i>
+  <div class="menuitem" (click)="goToUser()">
+    <div class="select-bar" [ngClass]="{'selected': getActivatedRoute('user')}"></div>
+    <i class='bx bx-user icon'></i>
     <div class="text">User</div>
   </div>
 
