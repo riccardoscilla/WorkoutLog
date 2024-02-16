@@ -8,10 +8,12 @@
     <p-chip (click)="minusDay()">
         <i class="pi pi-chevron-left" style="font-size: 14px; height: 20px; line-height: 20px;"></i>
     </p-chip>
-
-    <div (click)="openDateDialog()">
-        {{day | date:'longDate'}}
-    </div>
+    
+    <p-calendar [(ngModel)]="day" [touchUI]="true" [readonlyInput]="true" dateFormat="MM dd, yy" class="transparent">
+        <ng-template pTemplate="footer">
+            <p-button [text]="true" label="Today"></p-button>
+        </ng-template>
+    </p-calendar>
 
     <p-chip (click)="plusDay()">
         <i class="pi pi-chevron-right" style="font-size: 14px; height: 20px; line-height: 20px;"></i>
