@@ -1,4 +1,4 @@
-export abstract class Data {
+export class Data {
     data: boolean = false
     loading: boolean = false
     noData: boolean = false

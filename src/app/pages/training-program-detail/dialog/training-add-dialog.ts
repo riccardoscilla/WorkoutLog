@@ -1,4 +1,4 @@
-import { Training } from "src/app/model/training/training"
+import { Training } from "src/app/model/training"
 
 export class TrainingAddDialog {
     header: string = "New Training"

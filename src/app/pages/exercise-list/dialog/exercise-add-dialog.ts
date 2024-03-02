@@ -1,5 +1,4 @@
-import { Training } from "src/app/model/training/training"
-import { Exercise } from "./exercise"
+import { Exercise } from "../../../model/exercise"
 
 export class ExerciseAddDialog {
     header: string = "New Exercise"

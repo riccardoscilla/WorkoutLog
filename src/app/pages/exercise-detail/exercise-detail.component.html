@@ -7,11 +7,11 @@
     </div>
 </div>
 
-<div *ngIf="!exercise.data" style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px 8px;">
+<!-- <div *ngIf="!exercise.data" style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px 8px;">
     <span class="title"> {{header}} </span>
-</div>
+</div> -->
 
-<ng-container *ngIf="exercise.data">
+<ng-container *ngIf="data.data">
 
     <div style="display: flex; justify-content: space-between; padding: 0 0 8px 8px;">
         <div>
@@ -38,16 +38,7 @@
 
 </ng-container>
 
-<ng-container *ngIf="exercise.loading">
-    <div class="card">
-        <div class="card-title">
-            <i class="pi pi-spin pi-spinner"></i>
-            Loading ...
-        </div>
-    </div>
-</ng-container>
-
-<ng-container *ngIf="exercise.noData">
+<ng-container *ngIf="data.error">
     <div class="card">
         <div class="card-title">
             <i class="pi pi-info-circle"></i>

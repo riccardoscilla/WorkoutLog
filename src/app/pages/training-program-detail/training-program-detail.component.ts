@@ -4,10 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/auth/auth.service';
 import { getLastItem, getLastOrder, sortByKey, swapItems } from 'src/app/common/utils';
-import { TrainingProgram } from 'src/app/model/training-program/training-program';
-import { Training } from 'src/app/model/training/training';
-import { TrainingAddDialog } from 'src/app/model/training/training-add-dialog';
+import { TrainingProgram } from 'src/app/model/training-program';
+import { Training } from 'src/app/model/training';
+import { TrainingAddDialog } from 'src/app/pages/training-program-detail/dialog/training-add-dialog';
+import { DataService } from 'src/app/service/data.service';
 import { Firestore } from 'src/app/service/firestore.service';
+import { Data } from 'src/app/common/data';
 
 @Component({
   selector: 'app-training-program-detail',
@@ -16,9 +18,9 @@ import { Firestore } from 'src/app/service/firestore.service';
   providers: [ConfirmationService, MessageService]
 })
 export class TrainingProgramDetailComponent implements OnInit {
-  header: String = "Training Program Detail"
+  header: string
+  data: Data = new Data()
   trainingProgram: TrainingProgram = new TrainingProgram()
-  trainings: Training[] = []
 
   trainingAddDialog = new TrainingAddDialog()
   changeTrainingOrder = false
@@ -26,6 +28,7 @@ export class TrainingProgramDetailComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private firestore: Firestore,
+    private dataService: DataService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
@@ -38,53 +41,36 @@ export class TrainingProgramDetailComponent implements OnInit {
   }
 
   getTrainingProgram(id: string) {
-    this.trainingProgram.isLoading()
+    this.data.isLoading()
 
-    this.firestore.getTrainingProgram(id).subscribe({
-      next: (response) => {
-        if (!response.payload.exists) {
-          this.trainingProgram.isNoData()
-        }
-        else {
-          this.trainingProgram = TrainingProgram.fromSnapshot(response.payload)
-          this.header = this.trainingProgram.name
-          this.trainingProgram.isData()
-          this.getTrainings()
-        }
+    this.dataService.get_TrainingProgram_ById_Join_Training(id).subscribe({
+      next: (trainingProgram) => {
+        this.trainingProgram = trainingProgram
+        this.header = trainingProgram.name
+        this.data.isData()
       },
       error: (error) => {
         this.messageService.clear()
         this.messageService.add({severity: 'error', detail: 'Error getting Training Program' })
-      }
-    })
-  }
-
-  getTrainings() {
-    this.firestore.getTrainingsOfTrainingProgram(this.trainingProgram.id).subscribe({
-      next: (response) => {
-        this.trainings = response.map((data: DocumentData) => Training.fromSnapshot(data.payload.doc))
-        this.trainings = sortByKey(this.trainings, 'order')
-      },
-      error: (error) => {
-        this.messageService.clear()
-        this.messageService.add({severity: 'error', detail: 'Error getting Trainings' })
+        this.data.isError()
       }
     })
   }
 
   saveTrainingProgram() {
     let order = 0
-    this.trainings.forEach(training => {
+    this.trainingProgram.trainings.forEach(training => {
       training.order = order
       order += 1
-      this.firestore.patchTraining(training)
+      this.dataService.patch(training)
     })
-    this.firestore.patchTrainingProgram(this.trainingProgram)
-      .then(() => {
+    this.dataService.patch(this.trainingProgram).subscribe({
+      next: () => {
         this.messageService.clear()
         this.messageService.add({severity: 'success', detail: 'Training Program Saved'})
         this.router.navigate(['training-program', this.trainingProgram.id])
-      })
+      }
+    })
   }
 
   confirmDelete() {
@@ -99,19 +85,22 @@ export class TrainingProgramDetailComponent implements OnInit {
   }
 
   deleteTrainingProgram() {
-    this.firestore.deleteTrainingProgram(this.trainingProgram)
-      .then(() => this.gotoTrainingProgramList())
+    this.dataService.delete_TrainingProgram_Cascade_Training(this.trainingProgram).subscribe({
+      next: () => this.gotoTrainingProgramList()
+    })
   }
 
   saveTraining() {
     this.trainingAddDialog.training.trainingProgramId = this.trainingProgram.id
-    this.trainingAddDialog.training.order = getLastOrder(this.trainings)
-    this.firestore.addTraining(this.trainingAddDialog.training)
-      .then(() => {
+    this.trainingAddDialog.training.order = getLastOrder(this.trainingProgram.trainings)
+
+    this.dataService.add(this.trainingAddDialog.training).subscribe({
+      next: () => {
         this.trainingAddDialog = new TrainingAddDialog()
         this.messageService.clear()
         this.messageService.add({severity: 'success', detail: 'Training Added' })
-      })
+      }
+    })
   }
   
   openTrainingAddDialog() {
@@ -127,7 +116,7 @@ export class TrainingProgramDetailComponent implements OnInit {
   }
 
   alreadyChoosedTraining(): boolean {
-    const names = this.trainings.map(training => training.name)
+    const names = this.trainingProgram.trainings.map(training => training.name)
     return names.includes(this.trainingAddDialog.training.name.trim())
   }
 
@@ -138,12 +127,12 @@ export class TrainingProgramDetailComponent implements OnInit {
   }
   
   isLastTraining(training: Training) {
-    return training.order === getLastItem(this.trainings)?.order
+    return training.order === getLastItem(this.trainingProgram.trainings)?.order
   }
 
   orderDown(training: Training) {
-    const index1 = this.trainings.indexOf(training)
-    this.trainings = swapItems(this.trainings, index1, index1 + 1)
+    const index = this.trainingProgram.trainings.indexOf(training)
+    this.trainingProgram.trainings = swapItems(this.trainingProgram.trainings, index, index + 1)
   }
 
   isFirstTraining(training: Training) {
@@ -151,8 +140,8 @@ export class TrainingProgramDetailComponent implements OnInit {
   }
 
   orderUp(training: Training) {
-    const index1 = this.trainings.indexOf(training)
-    this.trainings = swapItems(this.trainings, index1, index1 - 1)
+    const index = this.trainingProgram.trainings.indexOf(training)
+    this.trainingProgram.trainings = swapItems(this.trainingProgram.trainings, index, index - 1)
   }
   
 }

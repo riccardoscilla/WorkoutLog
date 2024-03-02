@@ -1,4 +1,4 @@
-import { TrainingProgram } from "./training-program"
+import { TrainingProgram } from "../../../model/training-program"
 
 export class TrainingProgramAddDialog {
     header: string = "New Training Program"

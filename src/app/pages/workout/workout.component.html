@@ -1,0 +1,82 @@
+<p-toast position="top-center"></p-toast>
+
+<div style="display: flex; justify-content: space-between; padding: 35px 0 8px 8px;">
+    <span class="title"> Workout Log </span>
+</div>
+
+<div style="display: flex; justify-content: space-between; padding-bottom: 8px;">
+    <p-chip (click)="minusDay()">
+        <i class="pi pi-chevron-left" style="font-size: 14px; height: 20px; line-height: 20px;"></i>
+    </p-chip>
+    
+    <p-calendar [(ngModel)]="date" (ngModelChange)="setDate()" [touchUI]="true" [readonlyInput]="true" dateFormat="MM dd, yy" class="transparent" #calendar>
+        <ng-template pTemplate="footer">
+            <p-button [text]="true" label="Today" (click)="setToday(); calendar.hideOverlay()"></p-button>
+        </ng-template>
+    </p-calendar>
+
+    <p-chip (click)="plusDay()">
+        <i class="pi pi-chevron-right" style="font-size: 14px; height: 20px; line-height: 20px;"></i>
+    </p-chip>
+</div>
+
+<ng-container *ngIf="trainingExerciseLogs.length === 0">
+    <div class="card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="card-title"> Add Workout </span>
+
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <p-button icon="pi pi-plus" (click)="openWorkoutAddDialog()"></p-button>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="trainingExerciseLogs.length > 0">
+    <div class="card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="card-title"> Training Exercises </span>
+        </div>
+    
+        <div class="list">
+            <div class="list-item" *ngFor="let trainingExerciseLog of this.trainingExerciseLogs">
+
+                <div style="display: flex; align-items: center; gap: 16px; padding: 8px; flex: 1">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; gap: 8px;">
+                            <span style="font-weight: bold;">
+                                {{trainingExerciseLog.trainingExercise.exercise.name | capitalizeWords}}
+                            </span>
+                        </div>
+                        <div>
+                            Reps: <span>{{trainingExerciseLog.reps | toStringJoin}}</span>
+                        </div>
+                        <div>
+                            Difficulty: <span>{{trainingExerciseLog.difficulty}}</span>
+                        </div>
+                    </div>
+                    
+                </div>           
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+
+<p-dialog [(visible)]="workoutAddDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="header">
+        <span class="text-xl font-bold">{{workoutAddDialog.header}}</span>
+    </ng-template>
+    <ng-template pTemplate="content">
+
+        <div class="card" style="height: 100%;">
+            <p-listbox [options]="trainingDropdownOptions" [group]="true" [(ngModel)]="workoutAddDialog.training" 
+                optionLabel="label" optionValue="data" appendTo="body">
+            </p-listbox>
+        </div>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Save" (click)="addTrainingExerciseLogFromTraining()" [disabled]="!workoutAddDialog.canAdd()"></p-button>
+    </ng-template>
+</p-dialog>

@@ -1,43 +1,40 @@
 import { DocumentData, DocumentSnapshot } from "@angular/fire/compat/firestore"
-import { Rep } from "./rep"
-import { TrainingExerciseDocument } from "./training-exercise-document"
-import { Exercise } from "../exercise/exercise"
-import { getLastItem } from "src/app/common/utils"
+import { Rep, RepDocument } from "./rep"
+import { Exercise } from "./exercise"
+import { Document } from "./_document"
 
-export class TrainingExercise {
+export class TrainingExercise implements Document {
     id: string
     order: number
     trainingId: string
     exerciseId: string
-
     reps: Rep[] = []
-
     recover: number
-
     note: string = ""
 
-    static fromSnapshot(snapshot: DocumentSnapshot<DocumentData>): TrainingExercise {
-        const trainingExercise = new TrainingExercise()
-        trainingExercise.id = snapshot.id
-        trainingExercise.order = snapshot.data()!.order
-        trainingExercise.trainingId = snapshot.data()!.trainingId
-        trainingExercise.exerciseId = snapshot.data()!.exerciseId
+    exercise: Exercise = new Exercise()
 
-        trainingExercise.reps = snapshot.data()!.reps.map((rep: Rep) => Rep.fromDocument(rep))
-        trainingExercise.recover = snapshot.data()!.recover
+    fromSnapshot(snapshot: DocumentSnapshot<DocumentData>): TrainingExercise {
+        this.id = snapshot.id
+        this.order = snapshot.data()?.order
+        this.trainingId = snapshot.data()?.trainingId
+        this.exerciseId = snapshot.data()?.exerciseId
 
-        trainingExercise.note = snapshot.data()!.note
-        return trainingExercise
+        this.reps = snapshot.data()?.reps?.map((rep: RepDocument) => Rep.fromDocument(rep))
+        this.recover = snapshot.data()?.recover
+
+        this.note = snapshot.data()?.note
+        return this
     }
 
-    static fromTrainingExercise(te: TrainingExercise): TrainingExercise {
+    static deepcopy(te: TrainingExercise): TrainingExercise {
         const trainingExercise = new TrainingExercise()
         trainingExercise.id = te.id
         trainingExercise.order = te.order
         trainingExercise.trainingId = te.trainingId
         trainingExercise.exerciseId = te.exerciseId
 
-        trainingExercise.reps = te.reps.map(rep => Rep.fromRep(rep))
+        trainingExercise.reps = te.reps.map(rep => Rep.deepcopy(rep))
         trainingExercise.recover = te.recover
 
         trainingExercise.note = te.note

@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { DocumentData } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { retry } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { capitalizeWords, getContrastColor, getLastItem, getLastOrder, groupByKey, sortByKey, swapItems } from 'src/app/common/utils';
-import { Exercise } from 'src/app/model/exercise/exercise';
-import { Rep } from 'src/app/model/training-exercise/rep';
-import { TrainingExercise } from 'src/app/model/training-exercise/training-exercise';
-import { TrainingExerciseAddDialog } from 'src/app/model/training-exercise/training-exercise-add-dialog';
-import { Training } from 'src/app/model/training/training';
-import { Firestore } from 'src/app/service/firestore.service';
+import { Data } from 'src/app/common/data';
+import { getLastItem, getLastOrder, swapItems } from 'src/app/common/utils';
+import { Rep } from 'src/app/model/rep';
+import { Training } from 'src/app/model/training';
+import { TrainingExercise } from 'src/app/model/training-exercise';
+import { TrainingExerciseDialog } from 'src/app/pages/training-detail/dialog/training-exercise-dialog';
+import { DataService } from 'src/app/service/data.service';
 
 @Component({
   selector: 'app-training-detail',
@@ -19,19 +17,17 @@ import { Firestore } from 'src/app/service/firestore.service';
   providers: [ConfirmationService, MessageService]
 })
 export class TrainingDetailComponent implements OnInit {
-  header: String = "Training Program Detail"
+  header: string
+  data: Data = new Data()
   training: Training = new Training()
-  trainingExercises: TrainingExercise[] = []
-
-  exercises: Exercise[] = []
   exerciseDropdownOptions: object[] = []
 
-  trainingExerciseAddDialog = new TrainingExerciseAddDialog()
+  trainingExerciseDialog = new TrainingExerciseDialog()
   changeTrainingExerciseOrder = false
 
   constructor(
     public authService: AuthService,
-    private firestore: Firestore,
+    private dataService: DataService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
@@ -41,106 +37,76 @@ export class TrainingDetailComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.params['trainingId']
     this.getTraining(id)
-    this.getExercises()
+    this.getExerciseDropdownOptions()
   }
 
   getTraining(id: string) {
-    this.training.isLoading()
+    this.data.isLoading()
 
-    this.firestore.getTraining(id).subscribe({
-      next: (response) => {
-        if (!response.payload.exists) {
-          this.training.isNoData()
-        }
-        else {
-          this.training = Training.fromSnapshot(response.payload)
-          this.header = this.training.name
-          this.training.isData()
-          this.getTrainingExercises()
-        }
+    this.dataService.get_Training_ById_Join_TrainingExercise_Join_Exercise(id).subscribe({
+      next: (training) => {
+        this.training = training
+        this.header = training.name
+        this.data.isData()
       },
       error: (error) => {
         this.messageService.clear()
         this.messageService.add({severity: 'error', detail: 'Error getting Training' })
+        this.data.isError()
       }
     })
   }
 
-  getTrainingExercises() {
-    this.firestore.getTrainingExercisesOfTraining(this.training.id).subscribe({
-      next: (response) => {
-        this.trainingExercises = response.map((data: DocumentData) => TrainingExercise.fromSnapshot(data.payload.doc))
-        this.trainingExercises = sortByKey(this.trainingExercises, 'order')
+  getExerciseDropdownOptions() {
+    this.dataService.get_Exercise_DropdownOptions().subscribe({
+      next: (exerciseDropdownOptions) => {
+        this.exerciseDropdownOptions = exerciseDropdownOptions
       },
       error: (error) => {
         this.messageService.clear()
-        this.messageService.add({severity: 'error', detail: 'Error getting Training Exercises' })
-      }
-    })
-  }
-
-  getExercises() {
-    this.firestore.getExercises().subscribe({
-      next: (response) => {
-        this.exercises = response.map((data: DocumentData) => Exercise.fromSnapshot(data.payload.doc))         
-        this.exerciseDropdownOptions = []
-
-        groupByKey(this.exercises, 'group').forEach((value: Exercise[], key: string) => {
-          const option = {
-            label: capitalizeWords(key),
-            items: [] as object[]
-          }
-          value.forEach(exercise => option.items.push({
-            label: capitalizeWords(exercise.name),
-            id: exercise.id,
-            data: exercise
-          }))
-          this.exerciseDropdownOptions.push(option)
-        });
-      },
-      error: (error) => {
-        this.messageService.clear()
-        this.messageService.add({severity: 'error', detail: 'Error getting Exercises' })
+        this.messageService.add({severity: 'error', detail: 'Error getting Exercise Dropdown Options' })
       }
     })
   }
 
   saveTraining() {
     let order = 0
-    this.trainingExercises.forEach(trainingExercise => {
+    this.training.trainingExercises.forEach(trainingExercise => {
       trainingExercise.order = order
       order += 1
-      this.firestore.patchTrainingExercise(trainingExercise)
+      this.dataService.patch(trainingExercise)
     })
-    this.firestore.patchTraining(this.training)
-      .then(() => {
+    this.dataService.patch(this.training).subscribe({
+      next: () => {
         this.messageService.clear()
         this.messageService.add({severity: 'success', detail: 'Training Saved' })
         this.router.navigate(['training', this.training.id])
-      })
+      }
+    })
   }
 
   saveTrainingExercise() {
-    if (this.trainingExerciseAddDialog.trainingExercise.trainingId !== undefined) {
-      this.firestore.patchTrainingExercise(this.trainingExerciseAddDialog.trainingExercise)
-      .then(() => {
-        this.trainingExerciseAddDialog = new TrainingExerciseAddDialog() // close dialog when save
-        this.messageService.clear()
-        this.messageService.add({severity: 'success', detail: 'Training Exercise Updated' })
+    if (this.trainingExerciseDialog.trainingExercise.trainingId !== undefined) {
+      this.dataService.patch(this.trainingExerciseDialog.trainingExercise).subscribe({
+        next: () => {
+          this.trainingExerciseDialog = new TrainingExerciseDialog() // close dialog when save
+          this.messageService.clear()
+          this.messageService.add({severity: 'success', detail: 'Training Exercise Updated' })
+        }
       })
       return
     }
 
-    this.trainingExerciseAddDialog.trainingExercise.trainingId = this.training.id
-    this.trainingExerciseAddDialog.trainingExercise.order = getLastOrder(this.trainingExercises)
+    this.trainingExerciseDialog.trainingExercise.trainingId = this.training.id
+    this.trainingExerciseDialog.trainingExercise.order = getLastOrder(this.training.trainingExercises)
 
-    console.log(this.trainingExerciseAddDialog.trainingExercise)
-    this.firestore.addTrainingExercise(this.trainingExerciseAddDialog.trainingExercise)
-      .then(() => {
-        this.trainingExerciseAddDialog = new TrainingExerciseAddDialog() // close dialog when save
+    this.dataService.add(this.trainingExerciseDialog.trainingExercise).subscribe({
+      next: () => {
+        this.trainingExerciseDialog = new TrainingExerciseDialog() // close dialog when save
         this.messageService.clear()
         this.messageService.add({severity: 'success', detail: 'Training Exercise Added' })
-      })
+      }
+    })
   }
 
   confirmDelete() {
@@ -155,92 +121,72 @@ export class TrainingDetailComponent implements OnInit {
   }
 
   deleteTraining() {
-    this.firestore.deleteTraining(this.training)
-      .then(() => this.gotoTrainingProgramDetail())
+    const trainingProgramId = this.training.trainingProgramId
+    this.dataService.delete_Training_Cascade_TrainingExercise(this.training).subscribe({
+      next: () => this.router.navigate(['training-program', trainingProgramId])
+    })
   }
 
   deleteTrainingExercise() {
-    this.firestore.deleteTrainingExercise(this.trainingExerciseAddDialog.trainingExercise)
-      .then(() => this.trainingExerciseAddDialog = new TrainingExerciseAddDialog() )
+    this.dataService.delete_TrainingExercise(this.trainingExerciseDialog.trainingExercise).subscribe({
+      next: () => this.trainingExerciseDialog = new TrainingExerciseDialog()
+    })
   }
 
   // Training Exercise Reps Dialog
 
   openTrainingExerciseAddDialog() {
-    this.trainingExerciseAddDialog = new TrainingExerciseAddDialog()
-    this.trainingExerciseAddDialog.visible = true
+    this.trainingExerciseDialog = new TrainingExerciseDialog()
+    this.trainingExerciseDialog.visible = true
   }
 
   editTrainingExerciseAddDialog(trainingExercise: TrainingExercise) {
-    this.trainingExerciseAddDialog = new TrainingExerciseAddDialog()
-    this.trainingExerciseAddDialog.trainingExercise = TrainingExercise.fromTrainingExercise(trainingExercise)
-    this.trainingExerciseAddDialog.header = "Edit Training Exercise"
-    this.trainingExerciseAddDialog.visible = true
+    this.trainingExerciseDialog = new TrainingExerciseDialog()
+    this.trainingExerciseDialog.trainingExercise = TrainingExercise.deepcopy(trainingExercise)
+    this.trainingExerciseDialog.header = "Edit Training Exercise"
+    this.trainingExerciseDialog.visible = true
   }
 
   toggleEditRep(rep: Rep) {
     if (this.isEditingRep(rep)) 
-      this.trainingExerciseAddDialog.rep = new Rep()
+      this.trainingExerciseDialog.rep = new Rep()
     else 
-      this.trainingExerciseAddDialog.rep = Rep.fromRep(rep)
+      this.trainingExerciseDialog.rep = Rep.deepcopy(rep)
   }
 
   isEditingRep(rep: Rep): boolean {
-    return rep.order === this.trainingExerciseAddDialog.rep.order
+    return rep.order === this.trainingExerciseDialog.rep.order
   }
 
   isEditing(): boolean {
-    return this.trainingExerciseAddDialog.rep.order !== undefined
+    return this.trainingExerciseDialog.rep.order !== undefined
   }
 
   addRep() {
     // add new rep in training exercise. keep the values in the dialog 
-    const newRep = Rep.fromRep(this.trainingExerciseAddDialog.rep)
-    newRep.order = getLastOrder(this.trainingExerciseAddDialog.trainingExercise.reps)
-    this.trainingExerciseAddDialog.trainingExercise.reps.push(newRep)
+    const newRep = Rep.deepcopy(this.trainingExerciseDialog.rep)
+    newRep.order = getLastOrder(this.trainingExerciseDialog.trainingExercise.reps)
+    this.trainingExerciseDialog.trainingExercise.reps.push(newRep)
   }
 
   saveRep() {
     // update selected rep in training exercise. keep the values in the dialog 
-    const toUpdateRep = this.trainingExerciseAddDialog.trainingExercise.reps.find(r => r.order === this.trainingExerciseAddDialog.rep.order)!!
-    toUpdateRep.value = this.trainingExerciseAddDialog.rep.value
-    toUpdateRep.max = this.trainingExerciseAddDialog.rep.max
-    this.trainingExerciseAddDialog.rep = new Rep()
-    this.trainingExerciseAddDialog.rep.value = toUpdateRep.value
-    this.trainingExerciseAddDialog.rep.max = toUpdateRep.max
+    const toUpdateRep = this.trainingExerciseDialog.trainingExercise.reps.find(r => r.order === this.trainingExerciseDialog.rep.order)!!
+    toUpdateRep.value = this.trainingExerciseDialog.rep.value
+    toUpdateRep.max = this.trainingExerciseDialog.rep.max
+    this.trainingExerciseDialog.rep = new Rep()
+    this.trainingExerciseDialog.rep.value = toUpdateRep.value
+    this.trainingExerciseDialog.rep.max = toUpdateRep.max
   }
 
   removeRep() {
-    const toRemoveRep = this.trainingExerciseAddDialog.trainingExercise.reps.find(r => r.order === this.trainingExerciseAddDialog.rep.order)!!
-    this.trainingExerciseAddDialog.trainingExercise.reps = this.trainingExerciseAddDialog.trainingExercise.reps.filter(rep => rep.order !== toRemoveRep.order)
-    this.trainingExerciseAddDialog.rep = new Rep()
+    const toRemoveRep = this.trainingExerciseDialog.trainingExercise.reps.find(r => r.order === this.trainingExerciseDialog.rep.order)!!
+    this.trainingExerciseDialog.trainingExercise.reps = this.trainingExerciseDialog.trainingExercise.reps.filter(rep => rep.order !== toRemoveRep.order)
+    this.trainingExerciseDialog.rep = new Rep()
   }
 
   gotoTrainingProgramDetail() {
     this.router.navigate(['training-program', this.training.trainingProgramId])
-  }
-
-  // Styles and redering
-
-  repsString(reps: Rep[]): string {
-    return reps.map(rep => rep.toString()).join(", ")
-  }
-
-  exerciseName(trainingExercise: TrainingExercise) {
-    const e = this.exercises.find(e => e.id === trainingExercise.exerciseId)!!
-    return capitalizeWords(e.name)
-  }
-
-  exerciseGroup(trainingExercise: TrainingExercise) {
-    const e = this.exercises.find(e => e.id === trainingExercise.exerciseId)!!
-    return capitalizeWords(e.group)
-  }
-
-  exerciseGroupChipStyle() {
-    return {
-      'background-color': '#ae3c60',
-      'color': getContrastColor('#ae3c60')
-    }
   }
 
   // Training Exercise Order 
@@ -250,12 +196,12 @@ export class TrainingDetailComponent implements OnInit {
   }
 
   isLastTrainingExercise(trainingExercise: TrainingExercise) {
-    return trainingExercise.order === getLastItem(this.trainingExercises)?.order
+    return trainingExercise.order === getLastItem(this.training.trainingExercises)?.order
   }
 
   orderDown(trainingExercise: TrainingExercise) {
-    const index1 = this.trainingExercises.indexOf(trainingExercise)
-    this.trainingExercises = swapItems(this.trainingExercises, index1, index1 + 1)
+    const index = this.training.trainingExercises.indexOf(trainingExercise)
+    this.training.trainingExercises = swapItems(this.training.trainingExercises, index, index + 1)
   }
 
   isFirstTrainingExercise(trainingExercise: TrainingExercise) {
@@ -263,8 +209,8 @@ export class TrainingDetailComponent implements OnInit {
   }
 
   orderUp(trainingExercise: TrainingExercise) {
-    const index1 = this.trainingExercises.indexOf(trainingExercise)
-    this.trainingExercises = swapItems(this.trainingExercises, index1, index1 - 1)
+    const index = this.training.trainingExercises.indexOf(trainingExercise)
+    this.training.trainingExercises = swapItems(this.training.trainingExercises, index, index - 1)
   }
 
 }

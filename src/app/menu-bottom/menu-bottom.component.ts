@@ -12,9 +12,7 @@ export class MenuBottomComponent {
   constructor(
     private router: Router,
     private route: ActivatedRoute
-  ) { 
-    console.log(router.url)
-  }
+  ) { }
 
   gotoExerciseList() {
     this.selected = "exercise"
@@ -37,9 +35,7 @@ export class MenuBottomComponent {
   }
 
   getActivatedRoute(route: string): boolean {
-    // console.log(this.route.snapshot.url.map(segment => segment.path))
     return this.router.url.includes(route)
-    console.log(this.route.snapshot)
   }
 
 }

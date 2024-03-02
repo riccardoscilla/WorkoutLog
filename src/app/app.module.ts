@@ -2,28 +2,30 @@ import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { environment } from 'src/environments/environment';
 import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFirestoreModule, PERSISTENCE_SETTINGS } from '@angular/fire/compat/firestore';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { SignInComponent } from './sign-in/sign-in.component';
-import { SignUpComponent } from './sign-up/sign-up.component';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { FormsModule } from '@angular/forms';
-import { PrimeNgModule } from './primeng.module';
-import { MenuBottomComponent } from './menu-bottom/menu-bottom.component';
-import { ExerciseListComponent } from './pages/exercise-list/exercise-list.component';
-import { TopbarComponent } from './topbar/topbar.component';
-import { UserComponent } from './user/user.component';
-import { TrainingProgramListComponent } from './pages/training-program-list/training-program-list.component';
-import { TrainingProgramDetailComponent } from './pages/training-program-detail/training-program-detail.component';
-import { TrainingDetailComponent } from './pages/training-detail/training-detail.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MessageService } from 'primeng/api';
+import { environment } from 'src/environments/environment';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 import { CapitalizeWordsPipe } from './common/capitalize-words.pipe';
+import { ToStringJoinPipe } from './common/to-string-join.pipe';
+import { MenuBottomComponent } from './menu-bottom/menu-bottom.component';
 import { ExerciseDetailComponent } from './pages/exercise-detail/exercise-detail.component';
-import { WorkoutComponent } from './workout/workout.component';
+import { ExerciseListComponent } from './pages/exercise-list/exercise-list.component';
+import { TrainingDetailComponent } from './pages/training-detail/training-detail.component';
+import { TrainingExerciseDetailComponent } from './pages/training-exercise-detail/training-exercise-detail.component';
+import { TrainingProgramDetailComponent } from './pages/training-program-detail/training-program-detail.component';
+import { TrainingProgramListComponent } from './pages/training-program-list/training-program-list.component';
+import { WorkoutComponent } from './pages/workout/workout.component';
+import { PrimeNgModule } from './primeng.module';
+import { SignInComponent } from './sign-in/sign-in.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { TopbarComponent } from './topbar/topbar.component';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { WorkoutComponent } from './workout/workout.component';
     CapitalizeWordsPipe,
     ExerciseDetailComponent,
     WorkoutComponent,
+    ToStringJoinPipe,
+    TrainingExerciseDetailComponent,
   ],
   imports: [
     BrowserModule,

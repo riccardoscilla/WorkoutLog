@@ -1,21 +1,29 @@
+export interface RepDocument {
+    order: number
+    value: string
+}
+
 export class Rep {
     order: number
-    value: number = 0
+    value: number
     max: boolean = false
 
     toggleMax() {
         this.max = !this.max
     }
 
-    static fromDocument(doc: Rep): Rep {
+    static fromDocument(doc: RepDocument): Rep {
         const rep = new Rep()
         rep.order = doc.order
-        rep.max = doc.max
-        rep.value = doc.value
+        if (doc.value === "max") {
+            rep.max = true
+        } else {
+            rep.value = parseInt(doc.value)
+        }
         return rep
     } 
 
-    static fromRep(r: Rep): Rep {
+    static deepcopy(r: Rep): Rep {
         const rep = new Rep()
         rep.order = r.order
         rep.value = r.value
@@ -26,14 +34,13 @@ export class Rep {
     toDocument(): object {
         return {
             order: this.order,
-            value: this.value,
-            max: this.max
+            value: this.toString()
         }
     }
 
     toString(): string {
         if (this.max)
-            return "Max"
+            return "max"
         if (this.value)
             return this.value.toString()
         return ""

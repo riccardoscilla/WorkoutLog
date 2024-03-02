@@ -18,6 +18,9 @@ export function groupByKey<T>(list: T[], key: keyof T): Map<string, T[]> {
 
 
 export function sortByKey<T>(list: T[], key: keyof T): T[] {
+  if (list === undefined || list.length === 0) 
+    return []
+
   return list.sort((a, b) => {
     const propA = (a as any)[key];
     const propB = (b as any)[key];
@@ -41,6 +44,10 @@ export function sortByKey<T>(list: T[], key: keyof T): T[] {
 
 export function capitalizeWords(str: string): string {
     return str.replace(/\b\w/g, match => match.toUpperCase())
+}
+
+export function toCamelCase(str: string): string {
+  return str[0].toLowerCase() + str.slice(1, str.length)
 }
 
 export function getLastOrder<T>(list: T[]): number {
@@ -82,4 +89,11 @@ export function getContrastColor(hexColor: string) {
 
   // Choose white or black text color based on contrast
   return luminance > 0.5 ? '#000000' : '#ffffff';
+}
+
+export function formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }

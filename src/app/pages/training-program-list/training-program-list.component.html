@@ -1,6 +1,6 @@
 <p-toast position="top-center"></p-toast>
 
-<ng-container *ngIf="trainingProgram.isData">
+<ng-container *ngIf="data.isData">
 
     <div style="display: flex; justify-content: space-between; padding: 35px 0 8px 8px;">
         <span class="title"> Training Programs </span>
@@ -19,7 +19,7 @@
             </div>
 
             <div class="list">
-                <div class="list-item" *ngFor="let training of getTrainingsOf(trainingProgram)" (click)="gotoTrainingDetail(training)">
+                <div class="list-item" *ngFor="let training of trainingProgram.trainings" (click)="gotoTrainingDetail(training)">
                     <div>
                         {{training.order}} - {{training.name}}
                     </div>
@@ -30,16 +30,7 @@
 
 </ng-container>
 
-<ng-container *ngIf="trainingProgram.loading">
-    <div class="card">
-        <div class="card-title">
-            <i class="pi pi-spin pi-spinner"></i>
-            Loading ...
-        </div>
-    </div>
-</ng-container>
-
-<ng-container *ngIf="trainingProgram.noData">
+<ng-container *ngIf="data.noData">
     <div class="card">
         <div class="card-title">
             <i class="pi pi-info-circle"></i>

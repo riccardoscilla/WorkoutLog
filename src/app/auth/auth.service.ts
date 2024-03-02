@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { User } from '@firebase/auth-types';
-import { SignUp } from '../sign-up/model/sign-up';
+import { SignUp } from '../model/sign-up';
 import { MessageService } from 'primeng/api';
 import { FirebaseError } from '@angular/fire/app';
 import { capitalizeWords } from '../common/utils';

@@ -6,7 +6,7 @@
   </div>
 
   <div class="menuitem" (click)="gotoTrainingProgramList()">
-    <div class="select-bar" [ngClass]="{'selected': getActivatedRoute('training-program')}"></div>
+    <div class="select-bar" [ngClass]="{'selected': getActivatedRoute('training-program') || getActivatedRoute('training')}"></div>
     <i class='bx bx-spreadsheet icon'></i>
     <div class="text">Program</div>
   </div>
@@ -31,8 +31,6 @@
     <i class='bx bx-user icon'></i>
     <div class="text">User</div>
   </div>
-
-  <!-- <i class="pi pi-user" style="font-size: 16px;"></i> -->
 
 </main>
   

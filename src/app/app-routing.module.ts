@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SecureInnerPageGuard } from './auth/guards/secure-inner-page.guard';
 import { AuthGuard } from './auth/guards/auth.guard';
+import { SecureInnerPageGuard } from './auth/guards/secure-inner-page.guard';
+import { ExerciseDetailComponent } from './pages/exercise-detail/exercise-detail.component';
+import { ExerciseListComponent } from './pages/exercise-list/exercise-list.component';
+import { TrainingDetailComponent } from './pages/training-detail/training-detail.component';
+import { TrainingProgramDetailComponent } from './pages/training-program-detail/training-program-detail.component';
+import { TrainingProgramListComponent } from './pages/training-program-list/training-program-list.component';
+import { WorkoutComponent } from './pages/workout/workout.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { UserComponent } from './user/user.component';
-import { ExerciseListComponent } from './pages/exercise-list/exercise-list.component';
-import { ExerciseDetailComponent } from './pages/exercise-detail/exercise-detail.component';
-import { TrainingProgramListComponent } from './pages/training-program-list/training-program-list.component';
-import { TrainingProgramDetailComponent } from './pages/training-program-detail/training-program-detail.component';
-import { TrainingDetailComponent } from './pages/training-detail/training-detail.component';
-import { WorkoutComponent } from './workout/workout.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/workout', pathMatch: 'full' },

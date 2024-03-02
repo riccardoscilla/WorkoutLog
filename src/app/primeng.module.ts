@@ -1,27 +1,28 @@
 import { NgModule } from "@angular/core";
 
-import { ToolbarModule } from 'primeng/toolbar';
-import { ButtonModule } from 'primeng/button';
-import { SplitButtonModule } from 'primeng/splitbutton';
-import { InputTextModule } from 'primeng/inputtext';
-import { TableModule } from 'primeng/table';
-import { DialogModule } from 'primeng/dialog';
-import { CalendarModule } from 'primeng/calendar';
-import { ChipModule } from 'primeng/chip';
-import { DropdownModule } from 'primeng/dropdown';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { PasswordModule } from 'primeng/password';
-import { TooltipModule } from 'primeng/tooltip';
-import { CheckboxModule } from 'primeng/checkbox';
-import { RadioButtonModule } from 'primeng/radiobutton';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { ButtonModule } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ChipModule } from 'primeng/chip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ListboxModule } from 'primeng/listbox';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { PasswordModule } from 'primeng/password';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ToolbarModule } from 'primeng/toolbar';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   exports: [
@@ -46,7 +47,8 @@ import { BreadcrumbModule } from 'primeng/breadcrumb';
     TooltipModule,
     CheckboxModule,
     RadioButtonModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    ListboxModule
   ]
 })
 export class PrimeNgModule {}

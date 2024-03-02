@@ -7,7 +7,7 @@ import { capitalizeWords } from './utils';
 })
 export class CapitalizeWordsPipe implements PipeTransform {
 
-  transform(value: string): unknown {
+  transform(value: string): string {
     return capitalizeWords(value);
   }
 

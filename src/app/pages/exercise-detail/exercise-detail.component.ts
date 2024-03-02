@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { DocumentData } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { capitalizeWords, groupByKey } from 'src/app/common/utils';
-import { Exercise } from 'src/app/model/exercise/exercise';
+import { Data } from 'src/app/common/data';
+import { capitalizeWords } from 'src/app/common/utils';
+import { Exercise } from 'src/app/model/exercise';
 import { DataService } from 'src/app/service/data.service';
-import { Firestore } from 'src/app/service/firestore.service';
 
 @Component({
   selector: 'app-exercise-detail',
@@ -14,14 +13,13 @@ import { Firestore } from 'src/app/service/firestore.service';
   providers: [ConfirmationService, MessageService]
 })
 export class ExerciseDetailComponent {
-  header: String = "Exercise Detail"
+  header: string
+  data: Data = new Data()
   exercise: Exercise = new Exercise()
-  exercises: Exercise[] = []
-  exercisesGrouped: Map<string, Exercise[]> = new Map()
   groupDropdownOptions: object[] = []
   
   constructor(
-    private firestore: Firestore,
+    private dataService: DataService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
@@ -31,64 +29,46 @@ export class ExerciseDetailComponent {
   ngOnInit(): void {
     const id = this.route.snapshot.params['exerciseId']
     this.getExercise(id)
-    this.getExercises()
+    this.getGroupDropdownOptions()
   }
 
   getExercise(id: string) {
-    this.exercise.isLoading()
+    this.data.isLoading()
 
-    this.firestore.getExercise(id).subscribe({
-      next: (response) => {
-        if (!response.payload.exists) {
-          this.exercise.isNoData()
-        }
-        else {
-          this.exercise = Exercise.fromSnapshot(response.payload)
-          this.header = capitalizeWords(this.exercise.name)
-          this.exercise.isData()
-        }
+    this.dataService.get_Exercise_ById(id).subscribe({
+      next: (exercise) => {
+        this.exercise = exercise
+        this.header = exercise.name
+        this.data.isData()
       },
       error: (error) => {
+        this.data.isError()
         this.messageService.clear()
         this.messageService.add({severity: 'error', detail: 'Error getting Exercise' })
       }
     })
   }
 
-  getExercises() {
-    this.firestore.getExercises().subscribe({
-      next: (response) => {
-        if (response.length === 0) {
-          return
-        }
-        else {
-          this.exercises = response.map((data: DocumentData) => Exercise.fromSnapshot(data.payload.doc))
-          this.exercisesGrouped = groupByKey(this.exercises, "group")
-
-          this.groupDropdownOptions = []
-          this.exercisesGrouped.forEach((value: Exercise[], key: string) => {
-            const option = {
-              label: capitalizeWords(key),
-              id: key
-            }
-            this.groupDropdownOptions.push(option)
-          });
-        }
+  getGroupDropdownOptions() {
+    this.dataService.get_Group_DropdownOptions().subscribe({
+      next: (groupDropdownOptions) => {
+        this.groupDropdownOptions = groupDropdownOptions
       },
       error: (error) => {
         this.messageService.clear()
-        this.messageService.add({severity: 'error', detail: 'Error getting Exercises' })
+        this.messageService.add({severity: 'error', detail: 'Error getting Group Dropdown Options' })
       }
     })
   }
 
   saveExercise() {
-    this.firestore.patchExercise(this.exercise)
-      .then(() => {
+    this.dataService.patch(this.exercise).subscribe({
+      next: () => {
         this.messageService.clear()
         this.messageService.add({severity: 'success', detail: 'Exercise Saved'})
         this.router.navigate(['exercise', this.exercise.id])
-      })
+      }
+    })
   }
 
   confirmDelete() {
@@ -103,8 +83,9 @@ export class ExerciseDetailComponent {
   }
 
   deleteExercise() {
-    this.firestore.deleteExercise(this.exercise)
-      .then(() => this.gotoExerciseList())
+    this.dataService.delete_Exercise_Cascade_TrainingExercise(this.exercise).subscribe({
+      next: () => this.gotoExerciseList()
+    })
   }
 
   gotoExerciseList() {

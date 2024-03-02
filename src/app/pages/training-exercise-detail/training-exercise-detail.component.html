@@ -1,0 +1,16 @@
+<div style="display: flex; flex-direction: column; gap: 8px;">
+    <div style="display: flex; justify-content: space-between; gap: 8px;">
+        <span style="font-weight: bold;">
+            {{trainingExercise.exercise.name | capitalizeWords}}
+        </span>
+    </div>
+    <div>
+        Reps: <span>{{trainingExercise.reps | toStringJoin}}</span>
+    </div>
+    <div>
+        Rec: <span>{{trainingExercise.recover}}s</span>
+    </div>
+    <div *ngIf="trainingExercise.hasNote()">
+        Note: <span>{{trainingExercise.note}}</span>
+    </div>
+</div>

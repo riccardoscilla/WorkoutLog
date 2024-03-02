@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentData } from '@angular/fire/compat/firestore';
+import { AngularFirestore, CollectionReference, DocumentData, Query } from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-import { Exercise } from '../model/exercise/exercise';
-import { TrainingProgram } from '../model/training-program/training-program';
-import { Training } from '../model/training/training';
-import { TrainingExercise } from '../model/training-exercise/training-exercise';
+import { toCamelCase } from '../common/utils';
+import { Document } from '../model/_document';
+import { FireQuery, FireQueryWhere } from './FireQuery';
 
 @Injectable({
   providedIn: 'root'
@@ -16,130 +16,91 @@ export class Firestore {
     private authService: AuthService
   ) { }
 
-  // Exercise
-
-  getExercises() {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('exercise').snapshotChanges()
-  }
-
-  getExercise(exerciseId: string) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('exercise').doc(exerciseId).snapshotChanges()
-  }
-
-  addExercise(exercise: Exercise) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('exercise').add(exercise.toDocument())
-  }
-
-  patchExercise(exercise: Exercise) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('exercise').doc(exercise.id).update(exercise.toDocument())
-  }
-
-  deleteExercise(exercise: Exercise) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('exercise').doc(exercise.id).delete()
-  }
-
-  // Training Program
-
-  getTrainingPrograms() {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingProgram').snapshotChanges()
-  }
-
-  getTrainingProgram(trainingProgramId: string) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingProgram').doc(trainingProgramId).snapshotChanges()
-  }
-
-  addTrainingProgram(trainingProgram: TrainingProgram) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingProgram').add(trainingProgram.toDocument())
-  }
-
-  patchTrainingProgram(trainingProgram: TrainingProgram) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingProgram').doc(trainingProgram.id).update(trainingProgram.toDocument())
-  }
-
-  deleteTrainingProgram(trainingProgram: TrainingProgram) {
-    const user = this.authService.userInLocalStorage
-    this.getTrainingsOfTrainingProgram(trainingProgram.id).subscribe({
-      next: (response) => {
-        const trainings = response.map((data: DocumentData) => Training.fromSnapshot(data.payload.doc))
-        trainings.forEach(training => this.deleteTraining(training))
-      }
-    }) 
-    return this.firestore.collection('user').doc(user.uid).collection('trainingProgram').doc(trainingProgram.id).delete()
-  }
-
-  // Training
-
-  getTrainings() {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('training').snapshotChanges()
-  }
-
-  getTraining(trainingId: string) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('training').doc(trainingId).snapshotChanges()
-  }
-
-  getTrainingsOfTrainingProgram(trainingProgramId: string) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('training', ref => ref.where("trainingProgramId", "==", trainingProgramId)).snapshotChanges()
-  }
-
-  addTraining(training: Training) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('training').add(training.toDocument())
-  }
-
-  patchTraining(training: Training) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('training').doc(training.id).update(training.toDocument())
-  }
-
-  deleteTraining(training: Training) {
-    const user = this.authService.userInLocalStorage
-    this.getTrainingExercisesOfTraining(training.id).subscribe({
-      next: (response) => {
-        const trainingExercises = response.map((data: DocumentData) => TrainingExercise.fromSnapshot(data.payload.doc))
-        trainingExercises.forEach(trainingExercise => this.deleteTrainingExercise(trainingExercise))
-      }
+  whereBuilder(ref: CollectionReference<DocumentData>, where: FireQueryWhere[]): Query<DocumentData> {
+    let q: Query<DocumentData> = ref
+    where.forEach(w => {
+      q = q.where(w.param, w.comparator, w.value)
     })
-    
-    return this.firestore.collection('user').doc(user.uid).collection('training').doc(training.id).delete()
+    return q
   }
 
-  // Training Exercise
+  get<T extends Document>(query: FireQuery<T>): Observable<T[]> {
+    return new Observable(observer => {
 
-  getTrainingExercises() {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingExercise').snapshotChanges()
+      if (query.whereParam.length > 0 && query.whereParam[0].param === "id") {
+        this.getSingle(query).subscribe({
+          next: (response) => observer.next([response]),
+          error: (error) => observer.error(error)
+        })
+      } else {
+        this.getMultiple(query).subscribe({
+          next: (response) => observer.next(response),
+          error: (error) => observer.error(error)
+        })
+      }
+
+    })
   }
 
-  getTrainingExercisesOfTraining(trainingId: string) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingExercise', ref => ref.where("trainingId", "==", trainingId)).snapshotChanges()
+  getMultiple<T extends Document>(query: FireQuery<T>): Observable<T[]> {
+    return new Observable(observer => {
+      const user = this.authService.userInLocalStorage
+  
+      this.firestore.collection('user').doc(user.uid)
+        .collection(query.fromParam, ref => this.whereBuilder(ref, query.whereParam))
+        .snapshotChanges()
+        .subscribe({
+          next: (response) => {
+            if (response.length !== 0 && response[0].type !== "added")
+              return
+            const mappedData = response.map((data: DocumentData) => new query.type().fromSnapshot(data.payload.doc) as T)
+            observer.next(mappedData)   
+          },
+          error: (error) => {
+            observer.error(error)
+          }
+        })
+    })
   }
 
-  addTrainingExercise(trainingExercise: TrainingExercise) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingExercise').add(trainingExercise.toDocument())
+  getSingle<T extends Document>(query: FireQuery<T>): Observable<T> {
+    return new Observable(observer => {
+      const user = this.authService.userInLocalStorage;
+      const docId = query.whereParam[0].value as string
+
+      this.firestore.collection('user').doc(user.uid)
+        .collection(query.fromParam).doc(docId)
+        .snapshotChanges()
+        .subscribe({
+          next: (response) => {
+            if (response.type !== "added")
+              return
+            const mappedData = new query.type().fromSnapshot(response.payload) as T
+            observer.next(mappedData)   
+          },
+          error: (error) => {
+            observer.error(error)
+          }
+        })
+    })
   }
 
-  patchTrainingExercise(trainingExercise: TrainingExercise) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingExercise').doc(trainingExercise.id).update(trainingExercise.toDocument())
+  add<T extends Document>(obj: T) {
+    const user = this.authService.userInLocalStorage;
+    const collectionName = toCamelCase(obj.constructor.name)
+    return this.firestore.collection('user').doc(user.uid).collection(collectionName).add(obj.toDocument());
   }
 
-  deleteTrainingExercise(trainingExercise: TrainingExercise) {
-    const user = this.authService.userInLocalStorage
-    return this.firestore.collection('user').doc(user.uid).collection('trainingExercise').doc(trainingExercise.id).delete()
+  patch<T extends Document>(obj: T) {
+    const user = this.authService.userInLocalStorage;
+    const collectionName = toCamelCase(obj.constructor.name)
+    return this.firestore.collection('user').doc(user.uid).collection(collectionName).doc(obj.id).update(obj.toDocument())
+  }
+
+  delete<T extends Document>(obj: T) {
+    const user = this.authService.userInLocalStorage;
+    const collectionName = toCamelCase(obj.constructor.name)
+    return this.firestore.collection('user').doc(user.uid).collection(collectionName).doc(obj.id).delete()
   }
 
 }

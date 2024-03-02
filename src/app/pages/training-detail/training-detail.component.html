@@ -7,11 +7,7 @@
     </div>
 </div>
 
-<div *ngIf="!training.data" style="display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px 8px;">
-    <span class="title"> {{header}} </span>
-</div>
-
-<ng-container *ngIf="training.data">
+<ng-container *ngIf="data.data">
 
     <div style="display: flex; justify-content: space-between; padding: 0 0 8px 8px;">
         <div>
@@ -33,43 +29,19 @@
             <span class="card-title"> Training Exercises </span>
 
             <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <p-button icon="pi pi-sort-alt" [outlined]="!changeTrainingExerciseOrder" severity="secondary" (click)="toggleChangeTrainingExerciseOrder()" *ngIf="trainingExercises.length !== 0"></p-button>
+                <p-button icon="pi pi-sort-alt" [outlined]="!changeTrainingExerciseOrder" severity="secondary" 
+                    (click)="toggleChangeTrainingExerciseOrder()" 
+                    *ngIf="training.trainingExercises.length !== 0">
+                </p-button>
                 <p-button icon="pi pi-plus" (click)="openTrainingExerciseAddDialog()"></p-button>
             </div>
         </div>
     
         <div class="list">
-            <div class="list-item" *ngFor="let trainingExercise of this.trainingExercises">
+            <div class="list-item" *ngFor="let trainingExercise of this.training.trainingExercises">
 
                 <div style="display: flex; align-items: center; gap: 16px; padding: 8px; flex: 1" (click)="editTrainingExerciseAddDialog(trainingExercise)">
-                    <!-- <div>
-                        {{trainingExercise.order}}
-                    </div> -->
-                    <!-- <div>
-                        <p-chip [label]="exerciseGroup(trainingExercise)" [style]="exerciseGroupChipStyle()"></p-chip>
-                    </div> -->
-                    <!-- <p-chip [label]="exerciseGroup(trainingExercise)" [style]="exerciseGroupChipStyle()"></p-chip> -->
-
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; justify-content: space-between; gap: 8px;">
-                            <!-- <p-chip [label]="exerciseGroup(trainingExercise)" [style]="exerciseGroupChipStyle()"></p-chip> -->
-                            <span style="font-weight: bold;">
-                                {{exerciseName(trainingExercise)}}
-                            </span>
-                            <!-- <span>
-                                <p-chip [label]="getExercise(trainingExercise).group" [style]="{'background-color':'#ae3c60'}"></p-chip>
-                            </span> -->
-                        </div>
-                        <div>
-                            Reps: <span>{{repsString(trainingExercise.reps)}}</span>
-                        </div>
-                        <div>
-                            Rec: <span>{{trainingExercise.recover}}s</span>
-                        </div>
-                        <div *ngIf="trainingExercise.hasNote()">
-                            Note: <span>{{trainingExercise.note}}</span>
-                        </div>
-                    </div>
+                    <app-training-exercise-detail [trainingExercise]="trainingExercise"></app-training-exercise-detail>
                 </div>
 
                 <div *ngIf="changeTrainingExerciseOrder" style="display: flex; align-items: center; justify-content: center;">
@@ -84,17 +56,7 @@
 
 </ng-container>
 
-
-<ng-container *ngIf="training.loading">
-    <div class="card">
-        <div class="card-title">
-            <i class="pi pi-spin pi-spinner"></i>
-            Loading ...
-        </div>
-    </div>
-</ng-container>
-
-<ng-container *ngIf="training.noData">
+<ng-container *ngIf="data.noData">
     <div class="card">
         <div class="card-title">
             <i class="pi pi-info-circle"></i>
@@ -103,56 +65,57 @@
     </div>
 </ng-container>
 
-<p-dialog [(visible)]="trainingExerciseAddDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
+<p-dialog [(visible)]="trainingExerciseDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
     <ng-template pTemplate="header">
-        <span class="text-xl font-bold">{{trainingExerciseAddDialog.header}}</span>
+        <span class="text-xl font-bold">{{trainingExerciseDialog.header}}</span>
     </ng-template>
     <ng-template pTemplate="content">
 
         <div class="card" style="height: 100%;">
             <label>Exercise</label>
-            <p-dropdown [options]="exerciseDropdownOptions" [(ngModel)]="trainingExerciseAddDialog.trainingExercise.exerciseId"
-                [group]="true" optionLabel="label" optionValue="id" appendTo="body"></p-dropdown>
+            <p-dropdown [options]="exerciseDropdownOptions" [(ngModel)]="trainingExerciseDialog.trainingExercise.exerciseId"
+                [group]="true" optionLabel="label" optionValue="id" appendTo="body">
+            </p-dropdown>
 
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span class="card-title"> Reps </span>
     
                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <p-button [text]="true" icon="pi pi-trash" (click)="removeRep()" [disabled]="!trainingExerciseAddDialog.rep.isValid()" *ngIf="isEditing()"></p-button>
-                    <p-button [text]="true" icon="pi pi-save" (click)="saveRep()" [disabled]="!trainingExerciseAddDialog.rep.isValid()" *ngIf="isEditing()"></p-button>
-                    <p-button [text]="true" icon="pi pi-plus" (click)="addRep()" [disabled]="!trainingExerciseAddDialog.rep.isValid()" *ngIf="!isEditing()"></p-button>
+                    <p-button [text]="true" icon="pi pi-trash" (click)="removeRep()" [disabled]="!trainingExerciseDialog.rep.isValid()" *ngIf="isEditing()"></p-button>
+                    <p-button [text]="true" icon="pi pi-save" (click)="saveRep()" [disabled]="!trainingExerciseDialog.rep.isValid()" *ngIf="isEditing()"></p-button>
+                    <p-button [text]="true" icon="pi pi-plus" (click)="addRep()" [disabled]="!trainingExerciseDialog.rep.isValid()" *ngIf="!isEditing()"></p-button>
                 </div>
             </div>
 
             <div style="display: flex; gap: 16px; align-items: center; justify-content: center;">
                 <div class="p-inputgroup">
-                    <p-inputNumber [(ngModel)]="trainingExerciseAddDialog.rep.value" *ngIf="!trainingExerciseAddDialog.rep.max"></p-inputNumber> 
-                    <input pInputText [disabled]="true" value="Max" *ngIf="trainingExerciseAddDialog.rep.max"/>
+                    <p-inputNumber [(ngModel)]="trainingExerciseDialog.rep.value" *ngIf="!trainingExerciseDialog.rep.max"></p-inputNumber> 
+                    <input pInputText [disabled]="true" value="Max" *ngIf="trainingExerciseDialog.rep.max"/>
                     <span class="p-inputgroup-addon">
-                        <p-checkbox label="Max" [binary]="true" [(ngModel)]="trainingExerciseAddDialog.rep.max" (onClick)="trainingExerciseAddDialog.rep.toggleMax()">
+                        <p-checkbox label="Max" [binary]="true" [(ngModel)]="trainingExerciseDialog.rep.max" (onClick)="trainingExerciseDialog.rep.toggleMax()">
                         </p-checkbox>
                     </span>
                 </div>
             </div>
 
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <div *ngFor="let rep of trainingExerciseAddDialog.trainingExercise.reps">
+                <div *ngFor="let rep of trainingExerciseDialog.trainingExercise.reps">
                     <p-chip [label]="rep.toString()" (click)="toggleEditRep(rep)" [ngClass]="{editing: isEditingRep(rep)}"></p-chip>
                 </div>
             </div>
 
             <label>Recover (seconds)</label>
-            <p-inputNumber [(ngModel)]="trainingExerciseAddDialog.trainingExercise.recover"></p-inputNumber> 
+            <p-inputNumber [(ngModel)]="trainingExerciseDialog.trainingExercise.recover"></p-inputNumber> 
 
             <label>Note</label>
-            <textarea rows="2" cols="30" pInputTextarea [autoResize]="true"  [(ngModel)]="trainingExerciseAddDialog.trainingExercise.note"></textarea>
+            <textarea rows="2" cols="30" pInputTextarea [autoResize]="true"  [(ngModel)]="trainingExerciseDialog.trainingExercise.note"></textarea>
             
         </div>        
 
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button label="Delete" (click)="deleteTrainingExercise()"></p-button>
-        <p-button label="Save" (click)="saveTrainingExercise()" [disabled]="!trainingExerciseAddDialog.trainingExercise.isValid()"></p-button>
+        <p-button label="Save" (click)="saveTrainingExercise()" [disabled]="!trainingExerciseDialog.trainingExercise.isValid()"></p-button>
     </ng-template>
 </p-dialog>
 
