@@ -1,6 +1,10 @@
 import { WhereFilterOp } from '@firebase/firestore'
-import { toCamelCase } from '../common/utils'
 import { Document } from '../model/_document'
+import { Exercise } from '../model/exercise'
+import { Training } from '../model/training'
+import { TrainingExercise } from '../model/training-exercise'
+import { TrainingExerciseLog } from '../model/training-exercise-log'
+import { TrainingProgram } from '../model/training-program'
 
 export class FireQueryWhere {
     param: string
@@ -18,11 +22,26 @@ export class FireQuery<T extends Document> {
     type: new() => T
     fromParam: string;
     whereParam: FireQueryWhere[] = []
-  
+
+    classToCollection(): string {
+      const objName = new this.type().constructor.name
+      if (objName == TrainingProgram.name)
+        return "trainingProgram"
+      if (objName == Training.name)
+        return "training"
+      if (objName == TrainingExercise.name)
+        return "trainingExercise"
+      if (objName == TrainingExerciseLog.name)
+        return "trainingExerciseLog"
+      if (objName == Exercise.name)
+        return "exercise"
+      return ""
+    }
+
     static select<T extends Document>(type: new() => T): FireQuery<T> {
       const query = new FireQuery<T>()
       query.type = type
-      query.fromParam = toCamelCase(new type().constructor.name)
+      query.fromParam = query.classToCollection()
       return query
     }
 
