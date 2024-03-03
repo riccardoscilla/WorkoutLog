@@ -51,6 +51,7 @@ export class Firestore {
         .snapshotChanges()
         .subscribe({
           next: (response) => {
+            console.log(query, response)
             if (response.length !== 0 && response[0].type !== "added")
               return
             const mappedData = response.map((data: DocumentData) => new query.type().fromSnapshot(data.payload.doc) as T)
@@ -73,6 +74,7 @@ export class Firestore {
         .snapshotChanges()
         .subscribe({
           next: (response) => {
+            console.log(query, response)
             if (response.type !== "added")
               return
             const mappedData = new query.type().fromSnapshot(response.payload) as T
