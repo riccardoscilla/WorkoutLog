@@ -27,7 +27,6 @@ export class TrainingProgramDetailComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
-    private firestore: Firestore,
     private dataService: DataService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { formatDate } from 'src/app/common/utils';
+import { formatDate, getLastItem, swapItems } from 'src/app/common/utils';
 import { TrainingExerciseLog } from 'src/app/model/training-exercise-log';
 import { DataService } from 'src/app/service/data.service';
 import { WorkoutAddDialog } from './dialog/workout-add-dialog';
@@ -21,6 +21,8 @@ export class WorkoutComponent implements OnInit {
 
   workoutAddDialog: WorkoutAddDialog = new WorkoutAddDialog()
   date: Date
+
+  changeTrainingExerciseOrder = false
 
   constructor(
     public authService: AuthService,
@@ -106,14 +108,40 @@ export class WorkoutComponent implements OnInit {
     this.workoutAddDialog.visible = true
   }
 
+  // save
+
+  saveTrainingExerciseLogs() {
+    let order = 0
+    this.trainingExerciseLogs.forEach(tel => {
+      tel.order = order
+      order += 1
+      this.dataService.patch(tel).subscribe()
+    })
+  }
+
+  // remove all 
+
+  confirmDelete() {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to proceed?',
+      header: 'Delete all Logs',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        this.deleteAllLog()
+      }
+    });
+  }
+
+  deleteAllLog() {
+    this.trainingExerciseLogs.forEach(tel => this.dataService.delete(tel).subscribe())
+    this.getTrainingExercisesInDate()
+  }
+
   // date calendar
 
   private updateUrlWithDate(): void {
     const formattedDate = formatDate(this.date);
-    const queryParams = { ...this.route.snapshot.queryParams, date: formattedDate };
-    const urlTree = this.router.createUrlTree([], { queryParams, queryParamsHandling: 'merge' });
-    const url = this.router.serializeUrl(urlTree);
-    window.history.replaceState({}, '', url);
+    this.router.navigate(["workout"], { queryParams: { date: formattedDate } })
   }
 
   minusDay() {
@@ -122,7 +150,6 @@ export class WorkoutComponent implements OnInit {
     let newTimestamp = timestamp - oneDayInMilliseconds
     this.date = new Date(newTimestamp)
     this.updateUrlWithDate()
-    this.getTrainingExercisesInDate()
   }
  
   plusDay() {
@@ -131,18 +158,40 @@ export class WorkoutComponent implements OnInit {
     let newTimestamp = timestamp + oneDayInMilliseconds
     this.date = new Date(newTimestamp)
     this.updateUrlWithDate()
-    this.getTrainingExercisesInDate()
   }
 
   setToday() {
     this.date = new Date()
     this.updateUrlWithDate()
-    this.getTrainingExercisesInDate()
   }
 
   setDate() {
     this.updateUrlWithDate()
-    this.getTrainingExercisesInDate()
+  }
+
+
+  // Training Order 
+
+  toggleChangeTrainingExerciseOrder() {
+    this.changeTrainingExerciseOrder = !this.changeTrainingExerciseOrder
+  }
+  
+  isLastTrainingExercise(tel: TrainingExerciseLog) {
+    return tel.order === getLastItem(this.trainingExerciseLogs)?.order
+  }
+
+  orderDown(tel: TrainingExerciseLog) {
+    const index = this.trainingExerciseLogs.indexOf(tel)
+    this.trainingExerciseLogs = swapItems(this.trainingExerciseLogs, index, index + 1)
+  }
+
+  isFirstTrainingExercise(tel: TrainingExerciseLog) {
+    return tel.order === 0
+  }
+
+  orderUp(tel: TrainingExerciseLog) {
+    const index =  this.trainingExerciseLogs.indexOf(tel)
+    this.trainingExerciseLogs = swapItems(this.trainingExerciseLogs, index, index - 1)
   }
 
 }

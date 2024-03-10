@@ -1,7 +1,12 @@
 <p-toast position="top-center"></p-toast>
 
-<div style="display: flex; justify-content: space-between; padding: 35px 0 8px 8px;">
+<div style="display: flex; justify-content: space-between; padding: 35px 0 8px 8px; height: 90px;">
     <span class="title"> Workout Log </span>
+
+    <div *ngIf="trainingExerciseLogs.length > 0" style="display: flex; gap: 8px;">
+        <p-button  icon="pi pi-trash" [outlined]="true" severity="danger" (click)="confirmDelete()" ></p-button>
+        <p-button icon="pi pi-save" (click)="saveTrainingExerciseLogs()"></p-button>
+    </div>
 </div>
 
 <div style="display: flex; justify-content: space-between; padding-bottom: 8px;">
@@ -36,13 +41,19 @@
     <div class="card">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <span class="card-title"> Training Exercises </span>
+
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <p-button icon="pi pi-sort-alt" [outlined]="!changeTrainingExerciseOrder" severity="secondary" 
+                    (click)="toggleChangeTrainingExerciseOrder()">
+                </p-button>
+            </div>
         </div>
     
         <div class="list">
             <div class="list-item" *ngFor="let trainingExerciseLog of this.trainingExerciseLogs">
 
                 <div style="display: flex; align-items: center; gap: 16px; padding: 8px; flex: 1">
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; justify-content: space-between; gap: 8px;">
                             <span style="font-weight: bold;">
                                 {{trainingExerciseLog.trainingExercise.exercise.name | capitalizeWords}}
@@ -54,6 +65,11 @@
                         <div>
                             Difficulty: <span>{{trainingExerciseLog.difficulty}}</span>
                         </div>
+                    </div>
+
+                    <div *ngIf="changeTrainingExerciseOrder" style="display: flex; align-items: center; justify-content: center;">
+                        <p-button icon="pi pi-arrow-down" severity="secondary" [text]="true" [disabled]="isLastTrainingExercise(trainingExerciseLog)" class="in-list-item" (click)="orderDown(trainingExerciseLog)"></p-button>
+                        <p-button icon="pi pi-arrow-up" severity="secondary" [text]="true" [disabled]="isFirstTrainingExercise(trainingExerciseLog)" class="in-list-item"  (click)="orderUp(trainingExerciseLog)"></p-button>
                     </div>
                     
                 </div>           
@@ -80,3 +96,5 @@
         <p-button label="Save" (click)="addTrainingExerciseLogFromTraining()" [disabled]="!workoutAddDialog.canAdd()"></p-button>
     </ng-template>
 </p-dialog>
+
+<p-confirmDialog [style]="{width: '90vw'}"></p-confirmDialog>

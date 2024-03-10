@@ -283,6 +283,12 @@ export class DataService {
     })
   }
 
+  delete<T extends Document>(obj: T) {
+    return new Observable(observer => {
+      this.firestore.delete(obj).then(() => observer.next(obj))
+    })
+  }
+
   delete_TrainingProgram_Cascade_Training(trainingProgram: TrainingProgram) {
     const query = FireQuery.select(Training).where("trainingProgramId", "==", trainingProgram.id)
     this.firestore.delete(trainingProgram)

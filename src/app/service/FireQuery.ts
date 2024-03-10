@@ -23,6 +23,21 @@ export class FireQuery<T extends Document> {
     fromParam: string;
     whereParam: FireQueryWhere[] = []
 
+    static objectToCollection<T extends Document>(obj: T): string {
+      const objName = obj.constructor.name
+      if (objName == TrainingProgram.name)
+        return "trainingProgram"
+      if (objName == Training.name)
+        return "training"
+      if (objName == TrainingExercise.name)
+        return "trainingExercise"
+      if (objName == TrainingExerciseLog.name)
+        return "trainingExerciseLog"
+      if (objName == Exercise.name)
+        return "exercise"
+      return ""
+    }
+
     classToCollection(): string {
       const objName = new this.type().constructor.name
       if (objName == TrainingProgram.name)

@@ -51,7 +51,7 @@ export class Firestore {
         .snapshotChanges()
         .subscribe({
           next: (response) => {
-            console.log(query, response)
+            // console.log(query, response)
             if (response.length !== 0 && response[0].type !== "added")
               return
             const mappedData = response.map((data: DocumentData) => new query.type().fromSnapshot(data.payload.doc) as T)
@@ -74,7 +74,7 @@ export class Firestore {
         .snapshotChanges()
         .subscribe({
           next: (response) => {
-            console.log(query, response)
+            // console.log(query, response)
             if (response.type !== "added")
               return
             const mappedData = new query.type().fromSnapshot(response.payload) as T
@@ -89,19 +89,19 @@ export class Firestore {
 
   add<T extends Document>(obj: T) {
     const user = this.authService.userInLocalStorage;
-    const collectionName = toCamelCase(obj.constructor.name)
+    const collectionName = FireQuery.objectToCollection(obj)
     return this.firestore.collection('user').doc(user.uid).collection(collectionName).add(obj.toDocument());
   }
 
   patch<T extends Document>(obj: T) {
     const user = this.authService.userInLocalStorage;
-    const collectionName = toCamelCase(obj.constructor.name)
+    const collectionName = FireQuery.objectToCollection(obj)
     return this.firestore.collection('user').doc(user.uid).collection(collectionName).doc(obj.id).update(obj.toDocument())
   }
 
   delete<T extends Document>(obj: T) {
     const user = this.authService.userInLocalStorage;
-    const collectionName = toCamelCase(obj.constructor.name)
+    const collectionName = FireQuery.objectToCollection(obj)
     return this.firestore.collection('user').doc(user.uid).collection(collectionName).doc(obj.id).delete()
   }
 
