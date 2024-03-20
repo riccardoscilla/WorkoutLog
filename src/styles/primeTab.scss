@@ -1,0 +1,31 @@
+p-tabview {
+    // * {
+    //     background: none;
+    // }
+
+    .p-tabview-panels {
+        padding: 0;
+        background: none;
+    }
+
+    .p-tabview-nav {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 8px;
+        background: none;
+
+        li {
+            flex: 1;
+
+            a {
+                background: none;
+                display: flex;
+                gap: 8px;
+
+                padding: 8px;
+            }
+        }
+    }
+
+
+}

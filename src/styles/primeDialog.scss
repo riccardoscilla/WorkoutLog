@@ -31,3 +31,9 @@ p-dialog, p-confirmdialog {
         }
     }
 }
+
+p-dialog {
+    .p-dialog-mask {
+        padding: 0 16px 0 16px;
+    }
+}

@@ -4,10 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { formatDate, getLastItem, swapItems } from 'src/app/common/utils';
+import { formatDate, getLastItem, getLastOrder, swapItems } from 'src/app/common/utils';
 import { TrainingExerciseLog } from 'src/app/model/training-exercise-log';
 import { DataService } from 'src/app/service/data.service';
 import { WorkoutAddDialog } from './dialog/workout-add-dialog';
+import { TrainingExerciseLogAddDialog } from './dialog/training-exercise-log-add-dialog';
 
 @Component({
   selector: 'app-workout',
@@ -18,8 +19,10 @@ import { WorkoutAddDialog } from './dialog/workout-add-dialog';
 export class WorkoutComponent implements OnInit {
   trainingExerciseLogs: TrainingExerciseLog[] = []
   trainingDropdownOptions: object[] = []
+  exerciseDropdownOptions: object[] = []
 
   workoutAddDialog: WorkoutAddDialog = new WorkoutAddDialog()
+  trainingExerciseLogAddDialog: TrainingExerciseLogAddDialog = new TrainingExerciseLogAddDialog()
   date: Date
 
   changeTrainingExerciseOrder = false
@@ -34,35 +37,14 @@ export class WorkoutComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const dateString = this.route.snapshot.params['date']
+    this.date = dateString ? new Date(dateString) : new Date()
+    this.updateUrlWithDate()
 
-    this.handleDate().subscribe({
-      next: () => {
-        this.getTrainingExercisesInDate()
-        this.getTrainingDropdownOptions()
-      }
-    })
+    this.getTrainingExercisesInDate()
+    this.getTrainingDropdownOptions()
+    this.getExerciseDropdownOptions()
   }
-
-  /**
-   * 1. get training log based on selected date. 
-   * 2. change training log if 
-   */
-
-  private handleDate(): Observable<void> {
-    return new Observable(observer => {
-      this.route.queryParams.subscribe(params => {
-        const dateString = params['date']
-        if (dateString) {
-          this.date = new Date(dateString)
-        } else {
-          this.date = new Date()
-          this.updateUrlWithDate()
-        }
-        observer.next()
-      });
-    });
-  }
-
 
   getTrainingExercisesInDate() {
     this.dataService.get_TrainingExerciseLog_InDate(this.date).subscribe({
@@ -88,6 +70,18 @@ export class WorkoutComponent implements OnInit {
     })
   }
 
+  getExerciseDropdownOptions() {
+    this.dataService.get_Exercise_DropdownOptions().subscribe({
+      next: (exerciseDropdownOptions) => {
+        this.exerciseDropdownOptions = exerciseDropdownOptions
+      },
+      error: (error) => {
+        this.messageService.clear()
+        this.messageService.add({severity: 'error', detail: 'Error getting Exercise Dropdown Options' })
+      }
+    })
+  }
+
   addTrainingExerciseLogFromTraining() {
     this.dataService.get_Training_ById_Join_TrainingExercise(this.workoutAddDialog.training.id).subscribe({
       next: (training) => {
@@ -106,6 +100,21 @@ export class WorkoutComponent implements OnInit {
 
   openWorkoutAddDialog() {
     this.workoutAddDialog.visible = true
+  }
+
+  // add training exercise log
+
+  openTrainingExerciseLogAddDialog() {
+    this.trainingExerciseLogAddDialog.visible = true
+  }
+
+  addTrainingExerciseLogFromExercise() {
+    const exercise = this.trainingExerciseLogAddDialog.exercise
+    const order = getLastOrder(this.trainingExerciseLogs)
+    const trainingExerciseLog = TrainingExerciseLog.fromExercise(exercise, this.date, order)
+    this.dataService.add(trainingExerciseLog).subscribe()
+    this.trainingExerciseLogAddDialog = new TrainingExerciseLogAddDialog()
+    this.getTrainingExercisesInDate()
   }
 
   // save
@@ -140,8 +149,9 @@ export class WorkoutComponent implements OnInit {
   // date calendar
 
   private updateUrlWithDate(): void {
-    const formattedDate = formatDate(this.date);
-    this.router.navigate(["workout"], { queryParams: { date: formattedDate } })
+    this.router.navigate(["workout", formatDate(this.date)])
+    this.changeTrainingExerciseOrder = false
+    this.getTrainingExercisesInDate()
   }
 
   minusDay() {
@@ -167,6 +177,12 @@ export class WorkoutComponent implements OnInit {
 
   setDate() {
     this.updateUrlWithDate()
+  }
+
+  // detail
+
+  gotoTrainingExerciseLogDetail(trainingExerciseLog: TrainingExerciseLog) {
+    this.router.navigate(['workout', formatDate(this.date), trainingExerciseLog.id])
   }
 
 

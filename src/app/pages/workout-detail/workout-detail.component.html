@@ -1,0 +1,78 @@
+<p-toast position="top-center"></p-toast>
+
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0 8px 0;">
+    <div (click)="gotoWorkout()" style="align-self: flex-end;">
+        <i class="pi pi-chevron-left" style="font-size: 14px; padding:0 8px 0 8px;"></i>
+        <span class="back-font">Workout {{date | date:'mediumDate' }}</span>
+    </div>
+</div>
+
+<ng-container *ngIf="data.data">
+
+    <div style="display: flex; justify-content: space-between; padding: 0 0 8px 8px;">
+        <div>
+            <span class="title"> {{trainingExerciseLog.exercise.name | capitalizeWords}} </span>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+            <p-button icon="pi pi-trash" [outlined]="true" severity="danger"></p-button>
+            <p-button icon="pi pi-save"></p-button>
+        </div>
+    </div>
+
+        <p-tabView>
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    <i class="pi pi-calendar"></i>
+                    <span>Workout</span>
+                </ng-template>
+
+                <div class="card" *ngIf="trainingExerciseLog.trainingExercise" style="margin-bottom: 8px;">
+    
+                    <span class="card-title"> Training Exercise </span>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div>
+                            Reps: <span>{{trainingExerciseLog.trainingExercise.reps | toStringJoin}}</span>
+                        </div>
+                        <div>
+                            Rec: <span>{{trainingExerciseLog.trainingExercise.recover}}s</span>
+                        </div>
+                        <div *ngIf="trainingExerciseLog.trainingExercise.hasNote()">
+                            Note: <span>{{trainingExerciseLog.trainingExercise.note}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="trainingExerciseLog.trainingExercise">
+    
+                    <span class="card-title"> Weight (kg)</span>
+                    <div style="display: flex; gap: 16px; align-items: center; justify-content: center;">
+                        <div class="p-inputgroup" style="width: 70%;">
+                            <button pButton icon="pi pi-minus"></button>
+                            <p-inputNumber></p-inputNumber>
+                            <button pButton icon="pi pi-plus"></button>
+                        </div>                  
+                    </div>
+
+                    <span class="card-title"> Reps </span>
+                    <div style="display: flex; gap: 16px; align-items: center; justify-content: center;">
+                        <div class="p-inputgroup" style="width: 70%;">
+                            <button pButton icon="pi pi-minus"></button>
+                            <p-inputNumber></p-inputNumber>
+                            <button pButton icon="pi pi-plus"></button>
+                        </div>                  
+                    </div>
+                    
+                </div>
+                
+
+            </p-tabPanel>
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    <i class="pi pi-calendar"></i>
+                    <span>History</span>
+                </ng-template>
+            </p-tabPanel>
+        </p-tabView>                    
+
+</ng-container>

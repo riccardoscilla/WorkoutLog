@@ -46,24 +46,19 @@
                 <p-button icon="pi pi-sort-alt" [outlined]="!changeTrainingExerciseOrder" severity="secondary" 
                     (click)="toggleChangeTrainingExerciseOrder()">
                 </p-button>
+                <p-button icon="pi pi-plus" (click)="openTrainingExerciseLogAddDialog()"></p-button>
             </div>
         </div>
     
         <div class="list">
             <div class="list-item" *ngFor="let trainingExerciseLog of this.trainingExerciseLogs">
 
-                <div style="display: flex; align-items: center; gap: 16px; padding: 8px; flex: 1">
+                <div style="display: flex; align-items: center; gap: 16px; padding: 8px; flex: 1" (click)="gotoTrainingExerciseLogDetail(trainingExerciseLog)">
                     <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; justify-content: space-between; gap: 8px;">
                             <span style="font-weight: bold;">
-                                {{trainingExerciseLog.trainingExercise.exercise.name | capitalizeWords}}
+                                {{trainingExerciseLog.exercise.name | capitalizeWords}}
                             </span>
-                        </div>
-                        <div>
-                            Reps: <span>{{trainingExerciseLog.reps | toStringJoin}}</span>
-                        </div>
-                        <div>
-                            Difficulty: <span>{{trainingExerciseLog.difficulty}}</span>
                         </div>
                     </div>
 
@@ -96,5 +91,25 @@
         <p-button label="Save" (click)="addTrainingExerciseLogFromTraining()" [disabled]="!workoutAddDialog.canAdd()"></p-button>
     </ng-template>
 </p-dialog>
+
+
+<p-dialog [(visible)]="trainingExerciseLogAddDialog.visible" [modal]="true" [style]="{ width: '90vw' }" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="header">
+        <span class="text-xl font-bold">{{trainingExerciseLogAddDialog.header}}</span>
+    </ng-template>
+    <ng-template pTemplate="content">
+
+        <div class="card" style="height: 100%;">
+            <p-dropdown [options]="exerciseDropdownOptions" [(ngModel)]="trainingExerciseLogAddDialog.exercise"
+                [group]="true" optionLabel="label" optionValue="data" appendTo="body">
+            </p-dropdown>
+        </div>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Save" (click)="addTrainingExerciseLogFromExercise()" [disabled]="!workoutAddDialog.canAdd()"></p-button>
+    </ng-template>
+</p-dialog>
+
 
 <p-confirmDialog [style]="{width: '90vw'}"></p-confirmDialog>

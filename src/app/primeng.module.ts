@@ -23,6 +23,7 @@ import { ToastModule } from 'primeng/toast';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
+import { TabViewModule } from 'primeng/tabview';
 
 @NgModule({
   exports: [
@@ -48,7 +49,8 @@ import { TooltipModule } from 'primeng/tooltip';
     CheckboxModule,
     RadioButtonModule,
     BreadcrumbModule,
-    ListboxModule
+    ListboxModule,
+    TabViewModule
   ]
 })
 export class PrimeNgModule {}

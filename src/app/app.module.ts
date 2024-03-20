@@ -26,6 +26,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { UserComponent } from './user/user.component';
+import { WorkoutDetailComponent } from './pages/workout-detail/workout-detail.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { UserComponent } from './user/user.component';
     WorkoutComponent,
     ToStringJoinPipe,
     TrainingExerciseDetailComponent,
+    WorkoutDetailComponent,
   ],
   imports: [
     BrowserModule,

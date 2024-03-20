@@ -226,16 +226,17 @@ export class DataService {
     const end = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)
 
     const query = FireQuery.select(TrainingExerciseLog).where("date", ">=", start).and("date", "<", end)
+    const query3 = FireQuery.select(Exercise)
 
     return new Observable(observer => {
       combineLatest([
         this.firestore.get(query),
-        this.get_TrainingExercise_Join_Exercise()
+        this.firestore.get(query3)
       ]).subscribe({
-        next: ([trainingExerciseLogs, trainingExercises]) => {
+        next: ([trainingExerciseLogs, exercises]) => {
           trainingExerciseLogs.forEach(trainingExerciseLog => {
-            const trainingExercise = trainingExercises.find(trainingExercise => trainingExercise.id === trainingExerciseLog.trainingExerciseId)!
-            trainingExerciseLog.trainingExercise = trainingExercise
+            const exercise = exercises.find(exercise => exercise.id === trainingExerciseLog.exerciseId)!
+            trainingExerciseLog.exercise = exercise
           })
           trainingExerciseLogs = sortByKey(trainingExerciseLogs, "order")
           observer.next(trainingExerciseLogs)
@@ -247,28 +248,32 @@ export class DataService {
     })
   }
 
-  get_TrainingExercise_Join_Exercise(): Observable<TrainingExercise[]> {
-    const query = FireQuery.select(TrainingExercise)
-    const query2 = FireQuery.select(Exercise)
+  get_TrainingExerciseLog(trainingExerciseLogId: string): Observable<TrainingExerciseLog> {
+    const query = FireQuery.select(TrainingExerciseLog).where("id", "==", trainingExerciseLogId)
+    const query2 = FireQuery.select(TrainingExercise)
+    const query3 = FireQuery.select(Exercise)
 
     return new Observable(observer => {
       combineLatest([
         this.firestore.get(query),
-        this.firestore.get(query2)
+        this.firestore.get(query2),
+        this.firestore.get(query3)
       ]).subscribe({
-        next: ([trainingExercises, exercises]) => {
-          trainingExercises.forEach(trainingExercise => {
-            const exercise = exercises.find(exercise => exercise.id === trainingExercise.exerciseId)!
-            trainingExercise.exercise = exercise
+        next: ([trainingExerciseLogs, trainingExercises, exercises]) => {
+          trainingExerciseLogs.forEach(trainingExerciseLog => {
+            const trainingExercise = trainingExercises.find(trainingExercise => trainingExercise.id === trainingExerciseLog.trainingExerciseId)!
+            trainingExerciseLog.trainingExercise = trainingExercise
+
+            const exercise = exercises.find(exercise => exercise.id === trainingExerciseLog.exerciseId)!
+            trainingExerciseLog.exercise = exercise
           })
-          observer.next(trainingExercises)
+          observer.next(trainingExerciseLogs[0])
         },
         error: (error) => {
           observer.error(error)
         }
       })
     })
-
   }
 
   add<T extends Document>(obj: T) {

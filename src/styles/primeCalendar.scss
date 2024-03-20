@@ -1,3 +1,10 @@
 .p-component-overlay.p-datepicker-mask {
     z-index: 0 !important;
+    display: none;
+}
+
+p-calendar {
+    .p-datepicker {
+        min-width: auto;
+    }
 }
